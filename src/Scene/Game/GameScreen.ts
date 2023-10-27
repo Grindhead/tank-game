@@ -5,6 +5,11 @@ import levelData from '../../Resources/JSON/staticMaze.json';
 
 type SpriteType = 1 | 2;
 
+const gridXCount = 50,
+  gridYCount = 50,
+  tileWidth = 35,
+  tileHeight = 35;
+
 /**
  * the GameScreen class
  */
@@ -25,6 +30,11 @@ export class GameScreen extends AbstractGameScene {
   private player: Sprite;
 
   /**
+   * the player spawn point
+   */
+  private spawnPoint: Point;
+
+  /**
    * sets up the scene
    * @param sceneContainer - the Container for the scene
    * @returns void
@@ -42,13 +52,15 @@ export class GameScreen extends AbstractGameScene {
 
   /**
    * creates the player sprite
-   * @returns Sprite
+   * @returns void
    */
-  createPlayer = () => {
+  createPlayer = (): void => {
+    const scale = getScale(gridXCount, gridYCount, tileWidth, tileHeight);
     this.player = new Sprite(Texture.from('tank.png'));
-    const center = new Point(window.innerWidth / 2, window.innerHeight / 2);
-    this.player.x = center.x;
-    this.player.y = center.y;
+    this.player.x = this.spawnPoint.x;
+    this.player.y = this.spawnPoint.y;
+    this.player.scale.set(scale);
+    this.sceneContainer.addChild(this.player);
   };
 
   /**
@@ -113,14 +125,8 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   createGrid = (): void => {
-    const gridXCount = 50,
-      gridYCount = 50,
-      tileWidth = 35,
-      tileHeight = 35;
-    const scale = Math.min(
-      window.innerWidth / (gridXCount * tileWidth),
-      window.innerHeight / (gridYCount * tileHeight)
-    );
+    this.spawnPoint = null;
+    const scale = getScale(gridXCount, gridYCount, tileWidth, tileHeight);
     const gridWidth = gridXCount * tileWidth * scale;
     const xPadding = (window.innerWidth - gridWidth) / 2;
     this.hayList = [];
@@ -134,6 +140,9 @@ export class GameScreen extends AbstractGameScene {
         sprite.scale.set(scale);
         sprite.x = xPadding + i * (tileWidth * scale);
         sprite.y = j * (tileHeight * scale);
+        if (this.spawnPoint === null && data === 0) {
+          this.spawnPoint = new Point(sprite.x, sprite.y);
+        }
       });
     });
   };
@@ -154,8 +163,29 @@ export class GameScreen extends AbstractGameScene {
     } else {
       sprite = new Sprite(Texture.from('tile.png'));
     }
-    console.log('adding ', sprite, this.sceneContainer);
+
     this.sceneContainer.addChild(sprite);
     return sprite;
   };
 }
+
+/**
+ * get the scale of the grid tiles and player
+ *
+ * @param gridXCount - the number of tiles on the x axis
+ * @param gridYCount - the number of tiles on the y axis
+ * @param tileWidth - the width of each tile
+ * @param tileHeight - the height of each tile
+ * @returns the calculated scale of each tile
+ */
+const getScale = (
+  gridXCount: number,
+  gridYCount: number,
+  tileWidth: number,
+  tileHeight: number
+): number => {
+  return Math.min(
+    window.innerWidth / (gridXCount * tileWidth),
+    window.innerHeight / (gridYCount * tileHeight)
+  );
+};
