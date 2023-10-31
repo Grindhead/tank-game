@@ -108,7 +108,11 @@ export class GameScreen extends AbstractGameScene {
   addButton = (name: string, x: number, y: number): Sprite => {
     const button = createButton(name);
     button.addListener('pointerup', () => {
-      this.sceneSwitcher(name);
+      if (this.sceneSwitcher) {
+        this.sceneSwitcher(name);
+      } else {
+        throw new Error('SceneSwitcher is missing in button : ' + name);
+      }
     });
     button.x = x;
     button.y = y;

@@ -24,7 +24,7 @@ export interface GameScene {
 export abstract class AbstractGameScene implements GameScene {
   protected sceneState: SceneState | null = null;
   protected app: Application | null = null;
-  protected sceneSwitcher: (sceneName: string) => void;
+  protected sceneSwitcher: ((sceneName: string) => void) | null = null;
   private fadeInSceneTransition: SceneTransition | null = null;
   private fadeOutSceneTransition: SceneTransition | null = null;
   protected sceneContainer: Container | null = null;
