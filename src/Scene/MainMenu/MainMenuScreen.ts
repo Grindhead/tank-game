@@ -41,7 +41,7 @@ export class MainMenuScreen extends AbstractGameScene {
 
     this.header = new Text('Welcome\nPlease enjoy your stay.', headerStyle);
     this.header.style.wordWrap = true;
-    this.header.style.wordWrapWidth = 800 * getScale();
+
     sceneContainer.addChild(this.header);
     this.header.anchor.set(0.5, 0.5);
     this.updateDisplay();
@@ -60,6 +60,10 @@ export class MainMenuScreen extends AbstractGameScene {
     this.header.y = window.innerHeight * 0.3;
 
     this.header.style.fontSize = Math.max(50 * getScale(), 24);
+    this.header.style.wordWrapWidth = Math.max(
+      800 * getScale(),
+      window.innerWidth - 20 * getScale()
+    );
 
     this.playButton.x = center.x;
     this.playButton.y = center.y;

@@ -1,6 +1,7 @@
 import { Application, Container, Sprite } from 'pixi.js';
 import { SceneTransition } from '../Transition/Transition';
 import { createBackButton, createButton } from '../Utils/CreateButton';
+
 /**
  * Scene state enum, representing its lifecycle.
  */
