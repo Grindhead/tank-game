@@ -1,6 +1,8 @@
 import { Container, Point, Sprite, Texture } from 'pixi.js';
 import { AbstractGameScene, SceneState } from '../Scene';
 import levelData from '../../Resources/JSON/staticMaze.json';
+import { getScale } from '../../Utils/getGameScale';
+import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
 import {
   addRotateSpriteTowardsMouseSprite,
   stopRotatingSprites,
@@ -10,8 +12,6 @@ import {
   addMoveSpriteTowardsMouse,
   updateSpriteMovement
 } from '../../Utils/moveSpriteTowardsMouse';
-import { getScale } from '../../Utils/getGameScale';
-import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
 
 /**
  * the type of sprite to create
@@ -51,7 +51,6 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   setup = (sceneContainer: Container): void => {
-    //const center = new Point(window.innerWidth / 2, window.innerHeight / 2);
     this.sceneContainer = sceneContainer;
     this.sceneState = SceneState.LOAD;
 
