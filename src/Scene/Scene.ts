@@ -22,13 +22,13 @@ export interface GameScene {
  * Base implementation of a scene. Provides lifecycle update logic.
  */
 export abstract class AbstractGameScene implements GameScene {
-  protected sceneState: SceneState;
-  protected app: Application;
+  protected sceneState: SceneState | null = null;
+  protected app: Application | null = null;
   protected sceneSwitcher: (sceneName: string) => void;
-  private fadeInSceneTransition: SceneTransition;
-  private fadeOutSceneTransition: SceneTransition;
-  protected sceneContainer: Container;
-  protected backButton: Sprite;
+  private fadeInSceneTransition: SceneTransition | null = null;
+  private fadeOutSceneTransition: SceneTransition | null = null;
+  protected sceneContainer: Container | null = null;
+  protected backButton: Sprite | null = null;
 
   /**
    * fade in the scene
@@ -86,7 +86,7 @@ export abstract class AbstractGameScene implements GameScene {
    @returns void
    */
   public close = (): void => {
-    this.backButton.destroy();
+    this.backButton?.destroy();
     this.backButton = null;
   };
 
@@ -98,14 +98,14 @@ export abstract class AbstractGameScene implements GameScene {
   update = (delta: number): void => {
     switch (this.sceneState) {
       case SceneState.LOAD:
-        this.fadeInSceneTransition.update(delta, () => {
+        this.fadeInSceneTransition?.update(delta, () => {
           this.sceneState = SceneState.PROCESS;
         });
         break;
       case SceneState.PROCESS:
         break;
       case SceneState.FINALIZE:
-        this.fadeOutSceneTransition.update(delta, () => {
+        this.fadeOutSceneTransition?.update(delta, () => {
           this.sceneState = SceneState.DONE;
         });
         break;

@@ -40,24 +40,36 @@ export class Engine {
    * the {@link SceneSettings} instance
    */
   private sceneSettings: SceneSettings[];
+
+  /**
+   * the current {@link Application}
+   */
   private app: Application;
+
+  /**
+   * the current {@link SceneSettings}
+   */
   private currentScene: SceneSettings;
 
+  /**
+   * an engine to control what screen to show
+   * @param app - the current {@link Application}
+   * @param scenes - an array of {@link SceneSettings}
+   */
   constructor(app: Application, scenes: SceneSettings[]) {
     this.app = app;
     this.sceneSettings = scenes;
-    this.sceneSettings.forEach((sceneSettings: SceneSettings) => {
-      sceneSettings.gameScene.init(this.app, this.sceneSwitcher);
-    });
 
     // Finding the scene with the lowest index
-    this.currentScene = scenes.reduce((prev, curr) => {
-      if (prev === undefined) {
-        return curr;
-      } else {
-        return prev.index > curr.index ? curr : prev;
+    this.currentScene = scenes.reduce(
+      (prev: SceneSettings, curr: SceneSettings) => {
+        if (prev === undefined) {
+          return curr;
+        } else {
+          return prev.index > curr.index ? curr : prev;
+        }
       }
-    }, undefined);
+    );
 
     this.setupScene(this.currentScene);
     window.addEventListener('resize', this.onresize);

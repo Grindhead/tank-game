@@ -34,9 +34,9 @@ export interface SceneTransition {
  * Simple transition that can fade into/out of black.
  */
 export class SimpleFadeTransition implements SceneTransition {
-  private app: Application;
-  private type: TransitionType;
-  private transitionSprite: Sprite;
+  private app: Application | null = null;
+  private type: TransitionType | null = null;
+  private transitionSprite: Sprite | null = null;
   private updateStep: number;
 
   /**
@@ -62,7 +62,9 @@ export class SimpleFadeTransition implements SceneTransition {
     this.app = app;
     this.type = type;
     this.createTransitionSprite(type);
-    sceneContainer.addChild(this.transitionSprite);
+    if (this.transitionSprite) {
+      sceneContainer.addChild(this.transitionSprite);
+    }
   };
 
   /**
@@ -71,6 +73,10 @@ export class SimpleFadeTransition implements SceneTransition {
    * @returns void
    */
   private createTransitionSprite = (type: TransitionType): void => {
+    if (!this.app) {
+      throw new Error('App is not set in the current transition');
+    }
+
     const graphics = new Graphics();
     graphics.beginFill(0x000000);
     graphics.drawRect(0, 0, this.app.renderer.width, this.app.renderer.height);
@@ -89,6 +95,10 @@ export class SimpleFadeTransition implements SceneTransition {
    * @returns void
    */
   update = (delta: number, callback: () => void): void => {
+    if (!this.transitionSprite) {
+      return;
+    }
+
     switch (this.type) {
       case TransitionType.FADE_OUT:
         if (this.transitionSprite.alpha > 0) {

@@ -1,16 +1,16 @@
+import './resources/css/styles.css';
 import { Application, Assets, Text } from 'pixi.js';
 import Stats from 'stats.js';
 import { Engine } from './Engine/Engine';
-import { MainMenuScreen } from './Scene/MainMenu/MainMenuScreen';
-import { SimpleFadeTransition } from './Transition/Transition';
 import * as Constants from './Utils/Constants';
-import './resources/css/styles.css';
-import { GameScreen } from './Scene/Game/GameScreen';
+import { MainMenuScreen } from 'Scene/MainMenu/MainMenuScreen';
+import { SimpleFadeTransition } from 'Transition/Transition';
+import { GameScreen } from 'Scene/Game/GameScreen';
 
 /**
  * text to display while loading is in progress
  */
-let loadingText: Text;
+let loadingText: Text | null;
 
 /**
  * Mr D00b stats for performance testing
@@ -76,8 +76,10 @@ window.WebFontConfig = {
     loadingText.y = window.innerHeight / 2 - loadingText.height / 2;
 
     Assets.load(['atlas.json']).then(() => {
-      app.stage.removeChild(loadingText);
-      loadingText.destroy();
+      if (loadingText) {
+        app.stage.removeChild(loadingText);
+      }
+      loadingText?.destroy();
       loadingText = null;
       setup();
     });
@@ -87,6 +89,7 @@ window.WebFontConfig = {
 
 /**
  * load the webfont from google
+ * ignore the typescript errors
  */
 (function () {
   const wf = document.createElement('script');
@@ -96,5 +99,7 @@ window.WebFontConfig = {
   wf.type = 'text/javascript';
   wf.async = true;
   const s = document.getElementsByTagName('script')[0];
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   s.parentNode.insertBefore(wf, s);
 })();

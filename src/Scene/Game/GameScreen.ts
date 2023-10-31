@@ -3,12 +3,33 @@ import { createButton } from '../../Utils/CreateButton';
 import { AbstractGameScene, SceneState } from '../Scene';
 import levelData from '../../Resources/JSON/staticMaze.json';
 
+/**
+ * the type of sprite to create
+ * 0 = empty
+ * 1 = wall
+ * 2 = hay
+ */
 type SpriteType = 1 | 2;
 
-const gridXCount = 50,
-  gridYCount = 50,
-  tileWidth = 35,
-  tileHeight = 35;
+/**
+ * the amount of colums in the grid
+ */
+const gridXCount: number = 50;
+
+/**
+ * the amount of rows in the grid
+ */
+const gridYCount: number = 50;
+
+/**
+ * the width of each grid tile in pixels
+ */
+const tileWidth: number = 35;
+
+/**
+ * the height of each grid tile in pixels
+ */
+const tileHeight: number = 35;
 
 /**
  * the GameScreen class
@@ -17,22 +38,22 @@ export class GameScreen extends AbstractGameScene {
   /**
    * an array of all the rocks displayed
    */
-  private rocksList: Sprite[];
+  private rocksList: Sprite[] | null = null;
 
   /**
    * an array of all the hay bales displayed
    */
-  private hayList: Sprite[];
+  private hayList: Sprite[] | null = null;
 
   /**
    * the player tank sprite
    */
-  private player: Sprite;
+  private player: Sprite | null = null;
 
   /**
    * the player spawn point
    */
-  private spawnPoint: Point;
+  private spawnPoint: Point = new Point();
 
   /**
    * sets up the scene
@@ -44,9 +65,9 @@ export class GameScreen extends AbstractGameScene {
     this.sceneContainer = sceneContainer;
     this.sceneState = SceneState.LOAD;
 
+    this.spawnPoint = new Point();
     this.createGrid();
     this.createPlayer();
-
     this.updateDisplay();
   };
 
@@ -60,7 +81,7 @@ export class GameScreen extends AbstractGameScene {
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
     this.player.scale.set(scale);
-    this.sceneContainer.addChild(this.player);
+    this.sceneContainer?.addChild(this.player);
   };
 
   /**
@@ -91,9 +112,7 @@ export class GameScreen extends AbstractGameScene {
     });
     button.x = x;
     button.y = y;
-
-    this.sceneContainer.addChild(button);
-
+    this.sceneContainer?.addChild(button);
     return button;
   };
 
@@ -106,13 +125,13 @@ export class GameScreen extends AbstractGameScene {
       this.sceneContainer.destroy();
       this.sceneContainer = null;
 
-      this.hayList.forEach((hay) => {
+      this.hayList?.forEach((hay) => {
         hay.destroy();
       });
 
       this.hayList = null;
 
-      this.rocksList.forEach((rock) => {
+      this.rocksList?.forEach((rock) => {
         rock.destroy();
       });
 
@@ -125,18 +144,20 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   createGrid = (): void => {
-    this.spawnPoint = null;
+    this.spawnPoint = new Point();
     const scale = getScale(gridXCount, gridYCount, tileWidth, tileHeight);
     const gridWidth = gridXCount * tileWidth * scale;
     const xPadding = (window.innerWidth - gridWidth) / 2;
     this.hayList = [];
     this.rocksList = [];
     const grid = levelData.data;
+
     grid.forEach((xData, i) => {
       xData.forEach((yData, j) => {
-        const data = grid[i][j];
-
-        const sprite = this.createSprite(data as SpriteType);
+        const data = yData;
+        // we can be sure that this data exists and is exported at this point
+        const type = grid[i]![j] as SpriteType;
+        const sprite = this.createSprite(type as SpriteType);
         sprite.scale.set(scale);
         sprite.x = xPadding + i * (tileWidth * scale);
         sprite.y = j * (tileHeight * scale);
@@ -156,15 +177,15 @@ export class GameScreen extends AbstractGameScene {
     let sprite: Sprite;
     if (spriteType === 1) {
       sprite = new Sprite(Texture.from('rocks.png'));
-      this.rocksList.push(sprite);
+      this.rocksList?.push(sprite);
     } else if (spriteType === 2) {
       sprite = new Sprite(Texture.from('hay.png'));
-      this.hayList.push(sprite);
+      this.hayList?.push(sprite);
     } else {
       sprite = new Sprite(Texture.from('tile.png'));
     }
 
-    this.sceneContainer.addChild(sprite);
+    this.sceneContainer?.addChild(sprite);
     return sprite;
   };
 }
