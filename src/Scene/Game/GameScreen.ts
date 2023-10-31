@@ -1,6 +1,15 @@
 import { Container, Point, Sprite, Texture } from 'pixi.js';
 import { AbstractGameScene, SceneState } from '../Scene';
 import levelData from '../../Resources/JSON/staticMaze.json';
+import {
+  addRotateSpriteTowardsMouseSprite,
+  stopRotatingSprites,
+  updateSpriteRotation
+} from '../../Utils/rotateSpriteTowardsMouse';
+import {
+  addMoveSpriteTowardsMouse,
+  updateSpriteMovement
+} from '../../Utils/moveSpriteTowardsMouse';
 
 /**
  * the type of sprite to create
@@ -68,6 +77,9 @@ export class GameScreen extends AbstractGameScene {
     this.createGrid();
     this.createPlayer();
     this.updateDisplay();
+
+    addRotateSpriteTowardsMouseSprite(this.player!);
+    addMoveSpriteTowardsMouse(this.player!);
   };
 
   /**
@@ -93,9 +105,17 @@ export class GameScreen extends AbstractGameScene {
 
   /**
    * updates the scene
+   * @param delta - the time delta
    * @returns void
    */
-  sceneUpdate = (): void => {};
+  sceneUpdate = (delta: number): void => {
+    // rotate the player
+    updateSpriteRotation(delta, 0.01);
+    // move the player
+    updateSpriteMovement(delta, 0.1);
+    // update bullets
+    // check collisions
+  };
 
   /**
    * closes the scene
@@ -118,6 +138,8 @@ export class GameScreen extends AbstractGameScene {
 
       this.rocksList = null;
     }
+
+    stopRotatingSprites();
   };
 
   /**

@@ -3,13 +3,15 @@ import { mousePosition } from './getMousePosition';
 /**
  * an array of all the sprites
  */
-let spriteList: Sprite[] | null;
+let spriteList: Sprite[] | null = [];
 
 /**
- *
+ * moves an array of sprites towards the mouse position
+ * @param sprite - the sprite to move towards the mouse
+ * @returns void
  */
-export const initMoveSpriteTowardsMouse = (): void => {
-  spriteList = [];
+export const addMoveSpriteTowardsMouse = (sprite: Sprite): void => {
+  spriteList?.push(sprite);
 };
 
 /**
@@ -17,7 +19,7 @@ export const initMoveSpriteTowardsMouse = (): void => {
  * @param timeDelta - the current time delta
  * @param speed - the speed to move the sprite
  */
-export const updateMoveSpriteTowardsMouse = (
+export const updateSpriteMovement = (
   timeDelta: number,
   speed: number
 ): void => {
@@ -48,6 +50,10 @@ export const updateMoveSpriteTowardsMouse = (
   });
 };
 
+/**
+ * stops any moving sprites from updating
+ * @returns void
+ */
 export const stopMovingSprites = (): void => {
-  spriteList = null;
+  spriteList = [];
 };

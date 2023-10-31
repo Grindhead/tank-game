@@ -3,9 +3,9 @@ import { Application, Assets, Text } from 'pixi.js';
 import Stats from 'stats.js';
 import { Engine } from './Engine/Engine';
 import * as Constants from './Utils/Constants';
-import { MainMenuScreen } from 'Scene/MainMenu/MainMenuScreen';
-import { SimpleFadeTransition } from 'Transition/Transition';
-import { GameScreen } from 'Scene/Game/GameScreen';
+import { MainMenuScreen } from './Scene/MainMenu/MainMenuScreen';
+import { SimpleFadeTransition } from './Transition/Transition';
+import { GameScreen } from './Scene/Game/GameScreen';
 
 /**
  * text to display while loading is in progress

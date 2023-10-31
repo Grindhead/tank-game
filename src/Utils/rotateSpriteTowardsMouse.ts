@@ -30,7 +30,10 @@ export const stopRotatingSprites = (): void => {
  * @param easingFactor - a value between 0 and 1 (0 for no easing, 1 for full easing)
  * @returns void
  */
-export const update = (delta: number, easingFactor: number): void => {
+export const updateSpriteRotation = (
+  delta: number,
+  easingFactor: number
+): void => {
   spriteList.forEach((sprite) => {
     if (mousePosition === null) {
       return;
