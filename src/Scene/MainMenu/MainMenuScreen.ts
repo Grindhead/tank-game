@@ -9,12 +9,12 @@ export class MainMenuScreen extends AbstractGameScene {
   /**
    * the text that appears as a header
    */
-  private header: Text;
+  private header: Text | null = null;
 
   /**
    * the play button
    */
-  private playButton: Sprite;
+  private playButton: Sprite | null = null;
 
   /**
    * sets up the scene
@@ -50,7 +50,7 @@ export class MainMenuScreen extends AbstractGameScene {
    * @returns void
    */
   updateDisplay = (): void => {
-    if (!this.app) {
+    if (!this.app || !this.header || !this.playButton) {
       return;
     }
 
@@ -77,10 +77,10 @@ export class MainMenuScreen extends AbstractGameScene {
       this.header.destroy();
       this.header = null;
 
-      this.playButton.destroy();
+      this.playButton?.destroy();
       this.playButton = null;
 
-      this.sceneContainer.destroy();
+      this.sceneContainer?.destroy();
       this.sceneContainer = null;
     }
   };
