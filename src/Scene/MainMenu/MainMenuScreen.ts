@@ -1,5 +1,6 @@
 import { Container, Point, Sprite, Text, TextStyle } from 'pixi.js';
 import * as Constants from '../../Utils/Constants';
+import { getScale } from '../../Utils/getGameScale';
 import { AbstractGameScene, SceneState } from '../Scene';
 
 /**
@@ -35,12 +36,12 @@ export class MainMenuScreen extends AbstractGameScene {
       align: 'center',
       dropShadow: true,
       fill: '0xff0000',
-      fontFamily: 'Lacquer',
-      fontSize: '5em'
+      fontFamily: 'Lacquer'
     });
 
     this.header = new Text('Welcome\nPlease enjoy your stay.', headerStyle);
-
+    this.header.style.wordWrap = true;
+    this.header.style.wordWrapWidth = 800 * getScale();
     sceneContainer.addChild(this.header);
     this.header.anchor.set(0.5, 0.5);
     this.updateDisplay();
@@ -50,16 +51,18 @@ export class MainMenuScreen extends AbstractGameScene {
    * @returns void
    */
   updateDisplay = (): void => {
-    if (!this.app || !this.header || !this.playButton) {
+    if (!this.header || !this.playButton) {
       return;
     }
 
-    this.header.x = this.app.renderer.width / 2;
-    this.header.y = this.app.renderer.height * 0.2;
-    this.header.style.wordWrap = true;
-    this.header.style.wordWrapWidth = window.innerWidth - 50;
     const center = new Point(window.innerWidth / 2, window.innerHeight / 2);
+    this.header.x = center.x;
+    this.header.y = window.innerHeight * 0.3;
+
+    this.header.style.fontSize = Math.max(50 * getScale(), 24);
+
     this.playButton.x = center.x;
+    this.playButton.y = center.y;
   };
 
   /**

@@ -6,6 +6,7 @@ import * as Constants from './Utils/Constants';
 import { MainMenuScreen } from './Scene/MainMenu/MainMenuScreen';
 import { SimpleFadeTransition } from './Transition/Transition';
 import { GameScreen } from './Scene/Game/GameScreen';
+import { getScale, setScale } from './Utils/getGameScale';
 
 /**
  * text to display while loading is in progress
@@ -19,6 +20,12 @@ const stats = new Stats();
 stats.showPanel(0);
 document.body.appendChild(stats.dom);
 stats.dom.id = 'stats';
+
+// set the internal scale of the game
+setScale(
+  Constants.GRID_X_COUNT * Constants.TILE_WIDTH,
+  Constants.GRID_Y_COUNT * Constants.TILE_HEIGHT
+);
 
 /**
  * The {@link PIXI.Application} instance
@@ -68,7 +75,7 @@ window.WebFontConfig = {
   active() {
     loadingText = new Text('Loading...', {
       fontFamily: 'Lacquer',
-      fontSize: '5em',
+      fontSize: 50 * getScale() + 'px',
       align: 'center'
     });
     app.stage.addChild(loadingText);

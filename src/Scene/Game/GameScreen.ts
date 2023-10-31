@@ -10,6 +10,8 @@ import {
   addMoveSpriteTowardsMouse,
   updateSpriteMovement
 } from '../../Utils/moveSpriteTowardsMouse';
+import { getScale } from '../../Utils/getGameScale';
+import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
 
 /**
  * the type of sprite to create
@@ -18,26 +20,6 @@ import {
  * 2 = hay
  */
 type SpriteType = 1 | 2;
-
-/**
- * the amount of colums in the grid
- */
-const gridXCount: number = 50;
-
-/**
- * the amount of rows in the grid
- */
-const gridYCount: number = 50;
-
-/**
- * the width of each grid tile in pixels
- */
-const tileWidth: number = 35;
-
-/**
- * the height of each grid tile in pixels
- */
-const tileHeight: number = 35;
 
 /**
  * the GameScreen class
@@ -87,11 +69,10 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   createPlayer = (): void => {
-    const scale = getScale(gridXCount, gridYCount, tileWidth, tileHeight);
     this.player = new Sprite(Texture.from('tank.png'));
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
-    this.player.scale.set(scale);
+    this.player.scale.set(getScale());
     this.sceneContainer?.addChild(this.player);
   };
 
@@ -148,8 +129,8 @@ export class GameScreen extends AbstractGameScene {
    */
   createGrid = (): void => {
     this.spawnPoint = new Point();
-    const scale = getScale(gridXCount, gridYCount, tileWidth, tileHeight);
-    const gridWidth = gridXCount * tileWidth * scale;
+    const scale = getScale();
+    const gridWidth = GRID_X_COUNT * TILE_WIDTH * scale;
     const xPadding = (window.innerWidth - gridWidth) / 2;
     this.hayList = [];
     this.rocksList = [];
@@ -162,8 +143,8 @@ export class GameScreen extends AbstractGameScene {
         const type = grid[i]![j] as SpriteType;
         const sprite = this.createSprite(type as SpriteType);
         sprite.scale.set(scale);
-        sprite.x = xPadding + i * (tileWidth * scale);
-        sprite.y = j * (tileHeight * scale);
+        sprite.x = xPadding + i * (TILE_WIDTH * scale);
+        sprite.y = j * (TILE_HEIGHT * scale);
         if (this.spawnPoint === null && data === 0) {
           this.spawnPoint = new Point(sprite.x, sprite.y);
         }
@@ -192,24 +173,3 @@ export class GameScreen extends AbstractGameScene {
     return sprite;
   };
 }
-
-/**
- * get the scale of the grid tiles and player
- *
- * @param gridXCount - the number of tiles on the x axis
- * @param gridYCount - the number of tiles on the y axis
- * @param tileWidth - the width of each tile
- * @param tileHeight - the height of each tile
- * @returns the calculated scale of each tile
- */
-const getScale = (
-  gridXCount: number,
-  gridYCount: number,
-  tileWidth: number,
-  tileHeight: number
-): number => {
-  return Math.min(
-    window.innerWidth / (gridXCount * tileWidth),
-    window.innerHeight / (gridYCount * tileHeight)
-  );
-};

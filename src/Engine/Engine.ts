@@ -1,6 +1,8 @@
 import { Application, Container } from 'pixi.js';
 import { AbstractGameScene } from '../Scene/Scene';
 import { SceneTransition, TransitionType } from '../Transition/Transition';
+import { setScale } from '../Utils/getGameScale';
+import * as Constants from '../Utils/Constants';
 
 /**
  * Scene wrapper interface.
@@ -136,6 +138,12 @@ export class Engine {
   onresize = (): void => {
     this.app.view.width = window.innerWidth;
     this.app.view.height = window.innerHeight;
+
+    setScale(
+      Constants.GRID_X_COUNT * Constants.TILE_WIDTH,
+      Constants.GRID_Y_COUNT * Constants.TILE_HEIGHT
+    );
+
     this.app.renderer.resize(this.app.view.width, this.app.view.height);
     this.currentScene.gameScene.updateDisplay();
   };
