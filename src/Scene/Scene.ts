@@ -48,7 +48,7 @@ export abstract class AbstractGameScene implements GameScene {
   }
 
   /**
-   * Basic initialization of a scene, passing in the APP
+   * Basic initialization of a scene, passing in the {@link Application} and {@link sceneSwitcher}
    * @param app - the {@link Application} for the project
    * @param sceneSwitcher - controls switching between scenes
    * @returns void

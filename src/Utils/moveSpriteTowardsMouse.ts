@@ -35,7 +35,7 @@ export const updateSpriteMovement = (
       direction.x * direction.x + direction.y * direction.y
     );
 
-    if (distance > 0) {
+    if (distance > 5) {
       // Normalize the direction vector
       direction.x /= distance;
       direction.y /= distance;
@@ -46,6 +46,7 @@ export const updateSpriteMovement = (
       // Update the player's position
       sprite.x += direction.x * moveAmount;
       sprite.y += direction.y * moveAmount;
+      console.log(sprite.x, sprite.y);
     }
   });
 };

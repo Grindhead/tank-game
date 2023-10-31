@@ -46,6 +46,11 @@ export class GameScreen extends AbstractGameScene {
   private spawnPoint: Point = new Point();
 
   /**
+   * the full grid
+   */
+  private grid: SpriteType[] | null = null;
+
+  /**
    * sets up the scene
    * @param sceneContainer - the Container for the scene
    * @returns void
@@ -53,6 +58,9 @@ export class GameScreen extends AbstractGameScene {
   setup = (sceneContainer: Container): void => {
     this.sceneContainer = sceneContainer;
     this.sceneState = SceneState.LOAD;
+
+    this.sceneContainer.eventMode = 'dynamic';
+    this.sceneContainer.cursor = 'crosshair';
 
     this.spawnPoint = new Point();
     this.createGrid();
@@ -72,6 +80,7 @@ export class GameScreen extends AbstractGameScene {
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
     this.player.scale.set(getScale());
+    this.player.anchor.set(0.5);
     this.sceneContainer?.addChild(this.player);
   };
 
@@ -80,7 +89,13 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   updateDisplay = (): void => {
-    //const center = new Point(window.innerWidth / 2, window.innerHeight / 2);
+    const scale = getScale();
+    const gridWidth = GRID_X_COUNT * TILE_WIDTH * scale;
+    const xPadding = (window.innerWidth - gridWidth) / 2;
+    this.sceneContainer?.scale.set(scale);
+    if (this.sceneContainer) this.sceneContainer.x = xPadding;
+    this.spawnPoint.x *= scale;
+    this.spawnPoint.y *= scale;
   };
 
   /**
@@ -90,9 +105,9 @@ export class GameScreen extends AbstractGameScene {
    */
   sceneUpdate = (delta: number): void => {
     // rotate the player
-    updateSpriteRotation(delta, 0.01);
+    updateSpriteRotation(delta, 100);
     // move the player
-    updateSpriteMovement(delta, 0.1);
+    updateSpriteMovement(delta, 1000);
     // update bullets
     // check collisions
   };
@@ -128,25 +143,21 @@ export class GameScreen extends AbstractGameScene {
    */
   createGrid = (): void => {
     this.spawnPoint = new Point();
-    const scale = getScale();
-    const gridWidth = GRID_X_COUNT * TILE_WIDTH * scale;
-    const xPadding = (window.innerWidth - gridWidth) / 2;
+    this.grid = [];
     this.hayList = [];
     this.rocksList = [];
-    const grid = levelData.data;
+    const data = levelData.data;
 
-    grid.forEach((xData, i) => {
+    data.forEach((xData, i) => {
       xData.forEach((yData, j) => {
         const data = yData;
         // we can be sure that this data exists and is exported at this point
-        const type = grid[i]![j] as SpriteType;
+        const type = data[i]![j] as SpriteType;
         const sprite = this.createSprite(type as SpriteType);
-        sprite.scale.set(scale);
-        sprite.x = xPadding + i * (TILE_WIDTH * scale);
-        sprite.y = j * (TILE_HEIGHT * scale);
         if (this.spawnPoint === null && data === 0) {
           this.spawnPoint = new Point(sprite.x, sprite.y);
         }
+        this.grid!.push(type);
       });
     });
   };
