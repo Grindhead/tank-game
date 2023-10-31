@@ -1,6 +1,6 @@
 import { Application, Container, Sprite } from 'pixi.js';
 import { SceneTransition } from '../Transition/Transition';
-import { createBackButton } from '../Utils/CreateButton';
+import { createBackButton, createButton } from '../Utils/CreateButton';
 /**
  * Scene state enum, representing its lifecycle.
  */
@@ -120,5 +120,27 @@ export abstract class AbstractGameScene implements GameScene {
    */
   setFinalizing = (): void => {
     this.sceneState = SceneState.FINALIZE;
+  };
+
+  /**
+   * adds a button to the screen
+   * @param name - the name of the button
+   * @param x - the x position of the button
+   * @param y - the y position of the button
+   * @returns Sprite
+   */
+  addButton = (name: string, x: number, y: number): Sprite => {
+    const button = createButton(name);
+    button.addListener('pointerup', () => {
+      if (this.sceneSwitcher) {
+        this.sceneSwitcher(name);
+      } else {
+        throw new Error('SceneSwitcher is missing in button : ' + name);
+      }
+    });
+    button.x = x;
+    button.y = y;
+    this.sceneContainer?.addChild(button);
+    return button;
   };
 }

@@ -1,5 +1,4 @@
 import { Container, Point, Sprite, Texture } from 'pixi.js';
-import { createButton } from '../../Utils/CreateButton';
 import { AbstractGameScene, SceneState } from '../Scene';
 import levelData from '../../Resources/JSON/staticMaze.json';
 
@@ -97,28 +96,6 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   sceneUpdate = (): void => {};
-
-  /**
-   * adds a button to the screen
-   * @param name - the name of the button
-   * @param x - the x position of the button
-   * @param y - the y position of the button
-   * @returns Sprite
-   */
-  addButton = (name: string, x: number, y: number): Sprite => {
-    const button = createButton(name);
-    button.addListener('pointerup', () => {
-      if (this.sceneSwitcher) {
-        this.sceneSwitcher(name);
-      } else {
-        throw new Error('SceneSwitcher is missing in button : ' + name);
-      }
-    });
-    button.x = x;
-    button.y = y;
-    this.sceneContainer?.addChild(button);
-    return button;
-  };
 
   /**
    * closes the scene

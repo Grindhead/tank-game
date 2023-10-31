@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * creates a new level with 25 destructable tiles and 50 wall tiles in a 50x50 grid.
+ */
 const createLevel = () => {
   const gridSize = 50;
   const destructibleTiles = 25;

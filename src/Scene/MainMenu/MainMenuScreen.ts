@@ -1,6 +1,5 @@
 import { Container, Point, Sprite, Text, TextStyle } from 'pixi.js';
 import * as Constants from '../../Utils/Constants';
-import { createButton } from '../../Utils/CreateButton';
 import { AbstractGameScene, SceneState } from '../Scene';
 
 /**
@@ -51,6 +50,10 @@ export class MainMenuScreen extends AbstractGameScene {
    * @returns void
    */
   updateDisplay = (): void => {
+    if (!this.app) {
+      return;
+    }
+
     this.header.x = this.app.renderer.width / 2;
     this.header.y = this.app.renderer.height * 0.2;
     this.header.style.wordWrap = true;
@@ -64,26 +67,6 @@ export class MainMenuScreen extends AbstractGameScene {
    * @returns void
    */
   sceneUpdate = (): void => {};
-
-  /**
-   * adds a button to the screen
-   * @param name - the name of the button
-   * @param x - the x position of the button
-   * @param y - the y position of the button
-   * @returns Sprite
-   */
-  addButton = (name: string, x: number, y: number): Sprite => {
-    const button = createButton(name);
-    button.addListener('pointerup', () => {
-      this.sceneSwitcher(name);
-    });
-    button.x = x;
-    button.y = y;
-
-    this.sceneContainer.addChild(button);
-
-    return button;
-  };
 
   /**
    * closes the scene
