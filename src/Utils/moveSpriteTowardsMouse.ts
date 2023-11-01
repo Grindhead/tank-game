@@ -1,5 +1,6 @@
 import { Point, Sprite } from 'pixi.js';
 import { mousePosition } from './getMousePosition';
+import { getScale } from './getGameScale';
 
 /**
  * an array of all the sprites
@@ -29,6 +30,8 @@ export const updateSpriteMovement = (
       mousePosition.y - pos.y
     );
 
+    const scale = getScale();
+
     // Calculate the length of the direction vector (distance to the mouse)
     const distance = Math.sqrt(direction.x ** 2 + direction.y ** 2);
 
@@ -51,6 +54,9 @@ export const updateSpriteMovement = (
         for (const targetSprite of targetSprites) {
           const playerBounds = playerSprite.getBounds();
           const targetBounds = targetSprite.getBounds();
+
+          playerBounds.width -= 20 * scale;
+          playerBounds.height -= 20 * scale;
 
           if (playerBounds.intersects(targetBounds)) {
             isColliding = true;
