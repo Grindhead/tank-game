@@ -51,6 +51,11 @@ export class GameScreen extends AbstractGameScene {
   private grid: Sprite[] | null = null;
 
   /**
+   * the game scale
+   */
+  private scale: number = 0;
+
+  /**
    * sets up the scene
    * @param sceneContainer - the Container for the scene
    * @returns void
@@ -61,6 +66,8 @@ export class GameScreen extends AbstractGameScene {
 
     this.sceneContainer.eventMode = 'dynamic';
     this.sceneContainer.cursor = 'crosshair';
+
+    this.scale = getScale();
 
     this.spawnPoint = new Point();
     this.createGrid();
@@ -79,7 +86,7 @@ export class GameScreen extends AbstractGameScene {
     this.player = new Sprite(Texture.from('tank.png'));
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
-    this.player.scale.set(getScale());
+    this.player.scale.set(this.scale * 4);
     this.player.anchor.set(0.5);
     this.sceneContainer?.addChild(this.player);
   };
@@ -89,13 +96,12 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   updateDisplay = (): void => {
-    const scale = getScale();
-    const gridWidth = GRID_X_COUNT * TILE_WIDTH * scale;
+    const gridWidth = GRID_X_COUNT * TILE_WIDTH * this.scale;
     const xPadding = (window.innerWidth - gridWidth) / 2;
-    this.sceneContainer?.scale.set(scale);
+    this.sceneContainer?.scale.set(this.scale);
     if (this.sceneContainer) this.sceneContainer.x = xPadding;
-    this.spawnPoint.x *= scale;
-    this.spawnPoint.y *= scale;
+    this.spawnPoint.x *= this.scale;
+    this.spawnPoint.y *= this.scale;
   };
 
   /**
@@ -107,7 +113,7 @@ export class GameScreen extends AbstractGameScene {
     // rotate the player
     updateSpriteRotation(delta, 100);
     // move the player
-    updateSpriteMovement(delta, 1000);
+    updateSpriteMovement(delta, 1000, 1.01, [this.hayList!, this.rocksList!]);
     // update bullets
     // check collisions
   };
@@ -148,15 +154,14 @@ export class GameScreen extends AbstractGameScene {
     this.rocksList = [];
     const data = levelData.data;
 
+    this.spawnPoint = new Point(150, 10);
+
     data.forEach((xData, i) => {
       xData.forEach((yData, j) => {
         const data = yData as SpriteType;
         const sprite = this.createSprite(data);
         sprite.x = i * TILE_WIDTH;
         sprite.y = j * TILE_HEIGHT;
-        if (this.spawnPoint === null && data === 0) {
-          this.spawnPoint = new Point(sprite.x, sprite.y);
-        }
         this.grid!.push(sprite);
       });
     });
