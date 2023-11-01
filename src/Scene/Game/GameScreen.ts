@@ -111,9 +111,9 @@ export class GameScreen extends AbstractGameScene {
    */
   sceneUpdate = (delta: number): void => {
     // rotate the player
-    updateSpriteRotation(delta, 100);
+    updateSpriteRotation(delta, 200);
     // move the player
-    updateSpriteMovement(delta, 1500, 1.2, [this.hayList!, this.rocksList!]);
+    updateSpriteMovement(delta, 3000, 1.01, [this.hayList!, this.rocksList!]);
     // update bullets
     // check collisions
   };
