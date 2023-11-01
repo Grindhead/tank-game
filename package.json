@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --mode production --config webpack.config.mjs && pnpm images",
     "docs": "typedoc --options typedoc.json",
-    "start": "pnpm docs && webpack-dev-server --mode development",
+    "start": "pnpm docs && webpack-dev-server --mode development && pnpm open http://localhost:8080",
     "lint": "eslint -f unix \"src/**/*.{ts,tsx}\"",
     "compress": "pngquant --quality 60-80 --force dist/atlas.png --output dist/atlas.png",
     "images": "TexturePacker ./src/Resources/Texture-Packer/assets.tps && pnpm compress",

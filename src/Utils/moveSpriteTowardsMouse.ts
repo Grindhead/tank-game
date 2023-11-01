@@ -25,9 +25,12 @@ export const updateSpriteMovement = (
 ): void => {
   spriteList?.forEach((sprite: Sprite) => {
     // Calculate the direction vector to the mouse position
+
+    const pos = sprite.getGlobalPosition();
+
     const direction = new Point(
-      mousePosition.x - sprite.x,
-      mousePosition.y - sprite.y
+      mousePosition.x - pos.x,
+      mousePosition.y - pos.y
     );
 
     // Calculate the length of the direction vector (distance to the mouse)
@@ -46,7 +49,6 @@ export const updateSpriteMovement = (
       // Update the player's position
       sprite.x += direction.x * moveAmount;
       sprite.y += direction.y * moveAmount;
-      console.log(sprite.x, sprite.y);
     }
   });
 };

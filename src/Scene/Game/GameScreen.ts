@@ -19,7 +19,7 @@ import {
  * 1 = wall
  * 2 = hay
  */
-type SpriteType = 1 | 2;
+type SpriteType = 0 | 1 | 2;
 
 /**
  * the GameScreen class
@@ -48,7 +48,7 @@ export class GameScreen extends AbstractGameScene {
   /**
    * the full grid
    */
-  private grid: SpriteType[] | null = null;
+  private grid: Sprite[] | null = null;
 
   /**
    * sets up the scene
@@ -150,19 +150,19 @@ export class GameScreen extends AbstractGameScene {
 
     data.forEach((xData, i) => {
       xData.forEach((yData, j) => {
-        const data = yData;
-        // we can be sure that this data exists and is exported at this point
-        const type = data[i]![j] as SpriteType;
-        const sprite = this.createSprite(type as SpriteType);
+        const data = yData as SpriteType;
+        const sprite = this.createSprite(data);
+        sprite.x = i * TILE_WIDTH;
+        sprite.y = j * TILE_HEIGHT;
         if (this.spawnPoint === null && data === 0) {
           this.spawnPoint = new Point(sprite.x, sprite.y);
         }
-        this.grid!.push(type);
+        this.grid!.push(sprite);
       });
     });
   };
 
-  /**#
+  /**
    * creates a new Sprite based on the type provided
    * @param spriteType - the {@link SpriteType} to return
    * @returns Sprite

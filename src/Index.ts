@@ -33,7 +33,9 @@ setScale(
 const app = new Application({
   antialias: true,
   width: window.innerWidth,
-  height: window.innerHeight
+  height: window.innerHeight,
+  resolution: window.devicePixelRatio,
+  resizeTo: window
 });
 
 document.body.appendChild(app.view as unknown as Node);

@@ -38,9 +38,10 @@ export const updateSpriteRotation = (
     if (mousePosition === null) {
       return;
     }
+    const pos = sprite.getGlobalPosition();
     const targetAngle = Math.atan2(
-      mousePosition.y - sprite.y,
-      mousePosition.x - sprite.x
+      mousePosition.y - pos.y,
+      mousePosition.x - pos.x
     );
 
     // Convert radians to degrees and add 90 degrees to adjust for sprite orientation

@@ -1,4 +1,5 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -68,13 +69,21 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/resources/template.ejs',
+      template: './src/Resources/template.ejs',
       title: 'PIXI Games Demo',
       description: 'Demo for PIXI Games',
       url: '',
       type: 'website',
       name: 'Demo for PIXI Games',
       inject: true
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: './src/Resources/Favicon',
+          to: './dist'
+        }
+      ]
     })
   ]
 };
