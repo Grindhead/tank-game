@@ -1,100 +1,98 @@
 import { Point, Sprite } from 'pixi.js';
+import {
+  calculateDirectionVector,
+  calculateDistanceBetweenPoints
+} from './Math';
+import { updateSpriteRotation } from './rotateSpriteTowardsMouse';
 import { mousePosition } from './getMousePosition';
-import { getScale } from './getGameScale';
 
 /**
- * an array of all the sprites
+ * a moving sprite
  */
-let spriteList: Sprite[] | null = [];
+type MovingSprite = Sprite & {
+  /**
+   * the movement velocity
+   */
+  velocity: Point;
+};
+/**
+ * An array of all the sprites
+ */
+const spriteList: MovingSprite[] = [];
 
 /**
- * moves an array of sprites towards the mouse position
+ * Moves an array of sprites towards the mouse position.
  * @param sprite - the sprite to move towards the mouse
  * @returns void
  */
-export const addMoveSpriteTowardsMouse = (sprite: Sprite): void => {
-  spriteList?.push(sprite);
+export const addMoveSpriteTowardsMouse = (sprite) => {
+  spriteList.push(sprite);
+  sprite.velocity = new Point();
 };
 
-export const updateSpriteMovement = (
-  timeDelta: number,
-  speed: number,
-  friction: number,
-  collisionTargets: Sprite[][]
+/**
+ * Moves a group of PIXI sprites towards the mouse cursor while handling collisions with walls.
+ * Also calls {@link updateSpriteRotation} so do not call that independently for performance reasons.
+ * @param walls - An array of PIXI.Sprite objects representing walls for collision detection.
+ * @param timeDelta - The time interval for sprite movement.
+ * @returns void
+ */
+export const updateMoveSpriteTowardsMouse = (
+  walls: Sprite[],
+  timeDelta: number
 ): void => {
-  spriteList?.forEach((playerSprite: Sprite) => {
-    // Calculate the direction vector to the mouse position
-    const pos = playerSprite.getGlobalPosition();
-    const direction = new Point(
-      mousePosition.x - pos.x,
-      mousePosition.y - pos.y
+  // Update velocity with acceleration and easing
+  const maxSpeed = 6;
+  const acceleration = 0.8;
+  const easing = 0.8;
+
+  spriteList.forEach((sprite: MovingSprite) => {
+    const spritePosition = sprite.getGlobalPosition();
+    // Calculate direction vector towards the mouse
+    const direction = calculateDirectionVector(spritePosition, mousePosition); // Assuming mousePosition is imported
+    const distance = calculateDistanceBetweenPoints(
+      mousePosition,
+      spritePosition
     );
 
-    const scale = getScale();
-
-    // Calculate the length of the direction vector (distance to the mouse)
-    const distance = Math.sqrt(direction.x ** 2 + direction.y ** 2);
-
-    if (distance > 5) {
-      // Normalize the direction vector
-      direction.x /= distance;
-      direction.y /= distance;
-
-      // Calculate the amount to move in this frame
-      const moveAmount = speed * (timeDelta / 1000);
-
-      // Calculate the potential new position
-      let newX = playerSprite.x + direction.x * moveAmount;
-      let newY = playerSprite.y + direction.y * moveAmount;
-
-      // Check for collisions with all specified collision targets
-      let isColliding = false;
-
-      for (const targetSprites of collisionTargets) {
-        for (const targetSprite of targetSprites) {
-          const playerBounds = playerSprite.getBounds();
-          const targetBounds = targetSprite.getBounds();
-
-          playerBounds.width -= 20 * scale;
-          playerBounds.height -= 20 * scale;
-
-          if (playerBounds.intersects(targetBounds)) {
-            isColliding = true;
-            break; // Exit the inner loop on collision
-          }
-        }
-        if (isColliding) break; // Exit the outer loop on collision
-      }
-
-      // Apply friction when colliding
-      if (isColliding) {
-        // Calculate the normalized collision normal vector
-        const normalX = (newX - playerSprite.x) / moveAmount;
-        const normalY = (newY - playerSprite.y) / moveAmount;
-
-        // Calculate the dot product of the movement direction and collision normal
-        const dotProduct = direction.x * normalX + direction.y * normalY;
-
-        // Apply friction to the movement direction
-        direction.x -= normalX * dotProduct * friction;
-        direction.y -= normalY * dotProduct * friction;
-
-        // Recalculate the new position after friction is applied
-        newX = playerSprite.x + direction.x * moveAmount;
-        newY = playerSprite.y + direction.y * moveAmount;
-      }
-
-      // Update the player's position
-      playerSprite.x = newX;
-      playerSprite.y = newY;
+    if (distance < maxSpeed) {
+      return;
     }
+
+    // Calculate acceleration with easing
+    const accelerationX = direction.x * acceleration * easing * timeDelta;
+    const accelerationY = direction.y * acceleration * easing * timeDelta;
+
+    // Update velocity with acceleration, clamped to the max speed
+    sprite.velocity.x += accelerationX;
+    sprite.velocity.y += accelerationY;
+
+    const velocityMagnitude = Math.sqrt(
+      sprite.velocity.x * sprite.velocity.x +
+        sprite.velocity.y * sprite.velocity.y
+    );
+
+    if (velocityMagnitude > maxSpeed) {
+      const scaleFactor = maxSpeed / velocityMagnitude;
+      sprite.velocity.x *= scaleFactor;
+      sprite.velocity.y *= scaleFactor;
+    }
+
+    // Calculate the movement for this frame
+    const moveX = sprite.velocity.x * timeDelta;
+    const moveY = sprite.velocity.y * timeDelta;
+
+    sprite.position.x += moveX;
+    sprite.position.y += moveY;
+
+    updateSpriteRotation(timeDelta, 100);
   });
 };
 
 /**
- * stops any moving sprites from updating
+ * Stops any moving sprites from updating.
  * @returns void
  */
-export const stopMovingSprites = (): void => {
-  spriteList = [];
+export const stopMovingSprites = () => {
+  spriteList.length = 0;
 };

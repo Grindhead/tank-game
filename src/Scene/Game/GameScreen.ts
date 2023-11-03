@@ -5,13 +5,16 @@ import { getScale } from '../../Utils/getGameScale';
 import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
 import {
   addRotateSpriteTowardsMouseSprite,
-  stopRotatingSprites,
-  updateSpriteRotation
+  stopRotatingSprites
 } from '../../Utils/rotateSpriteTowardsMouse';
 import {
   addMoveSpriteTowardsMouse,
-  updateSpriteMovement
+  updateMoveSpriteTowardsMouse
 } from '../../Utils/moveSpriteTowardsMouse';
+import {
+  initMouseTracking,
+  stopMouseTracking
+} from '../../Utils/getMousePosition';
 
 /**
  * the type of sprite to create
@@ -73,7 +76,7 @@ export class GameScreen extends AbstractGameScene {
     this.createGrid();
     this.createPlayer();
     this.updateDisplay();
-
+    initMouseTracking();
     addRotateSpriteTowardsMouseSprite(this.player!);
     addMoveSpriteTowardsMouse(this.player!);
   };
@@ -110,10 +113,8 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   sceneUpdate = (delta: number): void => {
-    // rotate the player
-    updateSpriteRotation(delta, 200);
     // move the player
-    updateSpriteMovement(delta, 3000, 1.01, [this.hayList!, this.rocksList!]);
+    updateMoveSpriteTowardsMouse([...this.hayList!, ...this.rocksList!], delta);
     // update bullets
     // check collisions
   };
@@ -141,6 +142,7 @@ export class GameScreen extends AbstractGameScene {
     }
 
     stopRotatingSprites();
+    stopMouseTracking();
   };
 
   /**
