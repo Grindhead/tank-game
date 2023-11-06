@@ -153,7 +153,12 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   sceneUpdate = (delta: number): void => {
-    updateKeyboardMovement(delta, this.collisionTargetList!);
+    updateKeyboardMovement(
+      delta,
+      this.collisionTargetList!,
+      TILE_WIDTH * GRID_X_COUNT,
+      TILE_HEIGHT * GRID_Y_COUNT
+    );
     this.handleFire();
     updateBullets(
       delta,

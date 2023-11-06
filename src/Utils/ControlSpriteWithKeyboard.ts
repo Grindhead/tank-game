@@ -68,7 +68,12 @@ export const stopControllingAllSpritesWithKeyboard = (): void => {
   removeControlSpriteKeyboardListeners();
 };
 
-export const updateKeyboardMovement = (delta: number, wallList: Sprite[]) => {
+export const updateKeyboardMovement = (
+  delta: number,
+  wallList: Sprite[],
+  gameWidth: number,
+  gameHeight: number
+) => {
   spriteList.forEach((sprite) => {
     if (leftKeyIsDown) {
       updateRotationSpeed(ROTATION_DIRECTION.LEFT, delta, sprite);
@@ -103,6 +108,9 @@ export const updateKeyboardMovement = (delta: number, wallList: Sprite[]) => {
     sprite.velocity.y = clamp(sprite.velocity.y, -MAX_SPEED, MAX_SPEED);
     sprite.x += sprite.velocity.x;
     sprite.y += sprite.velocity.y;
+
+    sprite.x = clamp(sprite.x, sprite.width / 2, gameWidth);
+    sprite.y = clamp(sprite.y, sprite.height / 2, gameHeight);
   });
 };
 
@@ -116,6 +124,7 @@ const handleWallCollisions = (movingSprite: MovingSprite, walls: Sprite[]) => {
 
       const oppositeForceX = Math.cos(collisionAngle) * ACCELERATION * 2;
       const oppositeForceY = Math.sin(collisionAngle) * ACCELERATION * 2;
+
       movingSprite.velocity.x -= oppositeForceX;
       movingSprite.velocity.y -= oppositeForceY;
 
