@@ -114,17 +114,12 @@ export class Engine {
 
     const gameScene: AbstractGameScene = sceneSettings.gameScene;
 
-    sceneSettings.fadeInTransition.init(
-      this.app,
-      TransitionType.FADE_IN,
-      sceneContainer
-    );
+    sceneSettings.fadeInTransition.init(TransitionType.FADE_IN, sceneContainer);
 
     gameScene.init(this.app, this.sceneSwitcher);
     gameScene.setup(sceneContainer);
 
     sceneSettings.fadeOutTransition.init(
-      this.app,
       TransitionType.FADE_OUT,
       sceneContainer
     );

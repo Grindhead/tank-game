@@ -14,12 +14,11 @@ export enum TransitionType {
 export interface SceneTransition {
   /**
    * Initializes the transition, can be called multiple times.
-   * @param app - the {@link Application} the project uses
    * @param type - the {@link TransitionType} to use
    * @param sceneContainer - the {@link Container} the scenes use
    * @returns void
    */
-  init(app: Application, type: TransitionType, sceneContainer: Container): void;
+  init(type: TransitionType, sceneContainer: Container): void;
 
   /**
    * update the transition each frame
@@ -34,9 +33,9 @@ export interface SceneTransition {
  * Simple transition that can fade into/out of black.
  */
 export class SimpleFadeTransition implements SceneTransition {
-  private app: Application | null = null;
+  private sceneContainer: Container | null = null;
   private type: TransitionType | null = null;
-  private transitionSprite: Sprite | null = null;
+  private transitionSprite: Graphics | null = null;
   private updateStep: number;
 
   /**
@@ -49,18 +48,13 @@ export class SimpleFadeTransition implements SceneTransition {
 
   /**
    * init the transition
-   * @param app - the {@link Application} the game uses
    * @param type - the {@link TransitionType} the game uses
    * @param sceneContainer - the {@link Container} the game uses
    * @returns void
    */
-  public init = (
-    app: Application,
-    type: TransitionType,
-    sceneContainer: Container
-  ): void => {
-    this.app = app;
+  public init = (type: TransitionType, sceneContainer: Container): void => {
     this.type = type;
+    this.sceneContainer = sceneContainer;
     this.createTransitionSprite(type);
     if (this.transitionSprite) {
       sceneContainer.addChild(this.transitionSprite);
@@ -73,19 +67,24 @@ export class SimpleFadeTransition implements SceneTransition {
    * @returns void
    */
   private createTransitionSprite = (type: TransitionType): void => {
-    if (!this.app) {
+    if (!this.sceneContainer) {
       throw new Error('App is not set in the current transition');
     }
 
     const graphics = new Graphics();
     graphics.beginFill(0x000000);
-    graphics.drawRect(0, 0, this.app.renderer.width, this.app.renderer.height);
-    graphics.endFill();
-    this.transitionSprite = new Sprite(
-      this.app.renderer.generateTexture(graphics)
+    graphics.drawRect(
+      0,
+      0,
+      this.sceneContainer.width * 2,
+      this.sceneContainer.height * 2
     );
+    graphics.endFill();
+
     const alpha = type === TransitionType.FADE_OUT ? 1 : 0;
-    this.transitionSprite.alpha = alpha;
+    graphics.alpha = alpha;
+
+    this.transitionSprite = graphics;
   };
 
   /**
