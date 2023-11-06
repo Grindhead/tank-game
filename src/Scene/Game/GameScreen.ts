@@ -31,6 +31,11 @@ type GridSpriteType = 0 | 1 | 2;
 type TankType = 0 | 1 | 2;
 
 /**
+ * the spread of the bullet firing angle
+ */
+const BULLET_SPREAD: number = 15;
+
+/**
  * the GameScreen class
  */
 export class GameScreen extends AbstractGameScene {
@@ -130,11 +135,11 @@ export class GameScreen extends AbstractGameScene {
         break;
 
       case 1:
-        this.player!.tint = 0x00ff00;
+        this.player!.tint = 0x0000ff;
         break;
 
       case 2:
-        this.player!.tint = 0x0000ff;
+        this.player!.tint = 0x00ff00;
         break;
 
       default:
@@ -147,12 +152,55 @@ export class GameScreen extends AbstractGameScene {
    */
   handleFire = (): void => {
     if (this.isSpaceDown) {
-      createBullet(
-        this.player!.x,
-        this.player!.y,
-        this.player!.angle,
-        this.sceneContainer!
-      );
+      if (this.currentTankType === 0) {
+        createBullet(
+          this.player!.x,
+          this.player!.y,
+          this.player!.angle - BULLET_SPREAD,
+          this.sceneContainer!,
+          false
+        );
+
+        createBullet(
+          this.player!.x,
+          this.player!.y,
+          this.player!.angle + BULLET_SPREAD,
+          this.sceneContainer!,
+          true
+        );
+      } else if (this.currentTankType === 1) {
+        createBullet(
+          this.player!.x,
+          this.player!.y,
+          this.player!.angle,
+          this.sceneContainer!,
+          true
+        );
+      } else {
+        createBullet(
+          this.player!.x,
+          this.player!.y,
+          this.player!.angle,
+          this.sceneContainer!,
+          false
+        );
+
+        createBullet(
+          this.player!.x,
+          this.player!.y,
+          this.player!.angle - BULLET_SPREAD,
+          this.sceneContainer!,
+          false
+        );
+
+        createBullet(
+          this.player!.x,
+          this.player!.y,
+          this.player!.angle + BULLET_SPREAD,
+          this.sceneContainer!,
+          true
+        );
+      }
     }
   };
 

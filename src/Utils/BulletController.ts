@@ -15,12 +15,12 @@ const BULLET_SPEED: number = 10;
 /**
  * the time it takes to reload
  */
-const RELOAD_COOLDOWN: number = 10;
+export const RELOAD_COOLDOWN: number = 10;
 
 /**
  * time remaining until we have reloaded
  */
-let reloadTime: number = 0;
+export let reloadTime: number = 0;
 
 /**
  * an array of all the bullets
@@ -32,13 +32,15 @@ let BULLET_LIST: GameSprite[] = [];
  * @param x - the y position to create the bullet at
  * @param y - the x position to create the bullet at
  * @param angle - the angle in degrees
+ * @param reload - does the player need to reload
  * @returns {@link MovingSprite}
  */
 export const createBullet = (
   x: number,
   y: number,
   angle: number,
-  sceneContainer: Container
+  sceneContainer: Container,
+  reload: boolean
 ): GameSprite | undefined => {
   if (reloadTime > 0) return;
   const bullet = new GameSprite(Texture.from('hay.png'));
@@ -49,12 +51,11 @@ export const createBullet = (
   const angleInRadians = angle * (Math.PI / 180);
   bullet.velocity.x = Math.cos(angleInRadians) * BULLET_SPEED;
   bullet.velocity.y = Math.sin(angleInRadians) * BULLET_SPEED;
-
   bullet.life = BULLET_LIFE;
   sceneContainer.addChildAt(bullet, 0);
   BULLET_LIST.push(bullet);
 
-  reloadTime = RELOAD_COOLDOWN;
+  if (reload) reloadTime = RELOAD_COOLDOWN;
 
   return bullet;
 };
