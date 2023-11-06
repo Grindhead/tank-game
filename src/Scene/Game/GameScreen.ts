@@ -23,7 +23,12 @@ import { createBullet, updateBullets } from '../../Utils/BulletController';
  * 1 = wall
  * 2 = hay
  */
-type SpriteType = 0 | 1 | 2;
+type GridSpriteType = 0 | 1 | 2;
+
+/**
+ * the type of tank
+ */
+type TankType = 0 | 1 | 2;
 
 /**
  * the GameScreen class
@@ -70,6 +75,11 @@ export class GameScreen extends AbstractGameScene {
   private isSpaceDown: boolean = false;
 
   /**
+   * the current tank the player is using
+   */
+  private currentTankType: TankType = 0;
+
+  /**
    * sets up the scene
    * @param sceneContainer - the Container for the scene
    * @returns void
@@ -96,12 +106,38 @@ export class GameScreen extends AbstractGameScene {
   handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === ' ') {
       this.isSpaceDown = true;
+    } else if (e.key === 't') {
+      this.changeTank();
     }
   };
 
   handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === ' ') {
       this.isSpaceDown = false;
+    }
+  };
+
+  changeTank = (): void => {
+    this.currentTankType++;
+
+    if (this.currentTankType > 2) {
+      this.currentTankType = 0;
+    }
+
+    switch (this.currentTankType) {
+      case 0:
+        this.player!.tint = 0xff0000;
+        break;
+
+      case 1:
+        this.player!.tint = 0x00ff00;
+        break;
+
+      case 2:
+        this.player!.tint = 0x0000ff;
+        break;
+
+      default:
     }
   };
 
@@ -131,6 +167,7 @@ export class GameScreen extends AbstractGameScene {
     this.player.scale.set(this.scale * 4);
     this.player.anchor.set(0.5);
     this.sceneContainer!.addChild(this.player);
+    this.player.tint = 0xff0000;
     addControlSpriteWithKeyboard(this.player);
   };
 
@@ -212,7 +249,7 @@ export class GameScreen extends AbstractGameScene {
 
     data.forEach((xData, i) => {
       xData.forEach((yData, j) => {
-        const data = yData as SpriteType;
+        const data = yData as GridSpriteType;
         const sprite = this.createSprite(data);
         sprite.x = i * TILE_WIDTH;
         sprite.y = j * TILE_HEIGHT;
@@ -223,10 +260,10 @@ export class GameScreen extends AbstractGameScene {
 
   /**
    * creates a new Sprite based on the type provided
-   * @param spriteType - the {@link SpriteType} to return
+   * @param spriteType - the {@link GridSpriteType} to return
    * @returns Sprite
    */
-  createSprite = (spriteType: SpriteType): Sprite => {
+  createSprite = (spriteType: GridSpriteType): Sprite => {
     let sprite: GameSprite;
     if (spriteType === 1) {
       sprite = new GameSprite(Texture.from('rocks.png'));
