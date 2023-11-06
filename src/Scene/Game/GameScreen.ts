@@ -4,17 +4,12 @@ import levelData from '../../Resources/JSON/staticMaze.json';
 import { getScale } from '../../Utils/getGameScale';
 import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
 import {
-  addRotateSpriteTowardsMouseSprite,
-  stopRotatingSprites
-} from '../../Utils/rotateSpriteTowardsMouse';
-import {
-  addMoveSpriteTowardsMouse,
-  updateMoveSpriteTowardsMouse
-} from '../../Utils/moveSpriteTowardsMouse';
-import {
-  initMouseTracking,
-  stopMouseTracking
-} from '../../Utils/getMousePosition';
+  addKeyboardListeners,
+  addRotateSpriteWithKeyboard,
+  stopRotatingSpritesWithKeyboard,
+  updateKeyboardMovement
+} from '../../Utils/ControlSpriteWithKeyboard';
+import { MovingSprite } from '../../Utils/MovingSprite';
 
 /**
  * the type of sprite to create
@@ -41,7 +36,7 @@ export class GameScreen extends AbstractGameScene {
   /**
    * the player tank sprite
    */
-  private player: Sprite | null = null;
+  private player: MovingSprite | null = null;
 
   /**
    * the player spawn point
@@ -76,9 +71,7 @@ export class GameScreen extends AbstractGameScene {
     this.createGrid();
     this.createPlayer();
     this.updateDisplay();
-    initMouseTracking();
-    addRotateSpriteTowardsMouseSprite(this.player!);
-    addMoveSpriteTowardsMouse(this.player!);
+    addKeyboardListeners();
   };
 
   /**
@@ -86,12 +79,13 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   createPlayer = (): void => {
-    this.player = new Sprite(Texture.from('tank.png'));
+    this.player = new MovingSprite(Texture.from('tank.png'));
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
     this.player.scale.set(this.scale * 4);
     this.player.anchor.set(0.5);
     this.sceneContainer?.addChild(this.player);
+    addRotateSpriteWithKeyboard(this.player);
   };
 
   /**
@@ -114,7 +108,7 @@ export class GameScreen extends AbstractGameScene {
    */
   sceneUpdate = (delta: number): void => {
     // move the player
-    updateMoveSpriteTowardsMouse([...this.hayList!, ...this.rocksList!], delta);
+    updateKeyboardMovement(delta);
     // update bullets
     // check collisions
   };
@@ -141,8 +135,7 @@ export class GameScreen extends AbstractGameScene {
       this.rocksList = null;
     }
 
-    stopRotatingSprites();
-    stopMouseTracking();
+    stopRotatingSpritesWithKeyboard();
   };
 
   /**

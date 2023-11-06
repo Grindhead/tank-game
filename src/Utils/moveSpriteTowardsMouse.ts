@@ -5,16 +5,8 @@ import {
 } from './Math';
 import { updateSpriteRotation } from './rotateSpriteTowardsMouse';
 import { mousePosition } from './getMousePosition';
+import { MovingSprite } from './MovingSprite';
 
-/**
- * a moving sprite
- */
-type MovingSprite = Sprite & {
-  /**
-   * the movement velocity
-   */
-  velocity: Point;
-};
 /**
  * An array of all the sprites
  */
@@ -43,8 +35,8 @@ export const updateMoveSpriteTowardsMouse = (
 ): void => {
   // Update velocity with acceleration and easing
   const maxSpeed = 6;
-  const acceleration = 0.8;
-  const easing = 0.8;
+  const acceleration = 1;
+  const easing = 2;
 
   spriteList.forEach((sprite: MovingSprite) => {
     const spritePosition = sprite.getGlobalPosition();
@@ -55,7 +47,7 @@ export const updateMoveSpriteTowardsMouse = (
       spritePosition
     );
 
-    if (distance < maxSpeed) {
+    if (distance < maxSpeed * 2) {
       return;
     }
 
@@ -85,7 +77,7 @@ export const updateMoveSpriteTowardsMouse = (
     sprite.position.x += moveX;
     sprite.position.y += moveY;
 
-    updateSpriteRotation(timeDelta, 100);
+    updateSpriteRotation(timeDelta, 75);
   });
 };
 

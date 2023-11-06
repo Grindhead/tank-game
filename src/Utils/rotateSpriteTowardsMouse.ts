@@ -59,7 +59,9 @@ export const updateSpriteRotation = (
     }
 
     // Calculate the rotation change based on the easing factor and delta time
-    const rotationChange = (angleDiff * easingFactor * delta) / 1000;
+    const rotationChange = Math.round(
+      (angleDiff * easingFactor * delta) / 1000
+    );
 
     // Update the sprite's rotation with the new value
     sprite.rotation += (rotationChange * Math.PI) / 180;
