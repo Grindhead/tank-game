@@ -9,8 +9,8 @@ enum ROTATION_DIRECTION {
 
 const MAX_SPEED: number = 34;
 const MAX_ROTATION_SPEED: number = 10;
-const ACCELERATION: number = 0.1; // Increase acceleration for a more responsive feel
-const ROTATION_ACCELERATION: number = 0.04; // Increase rotation acceleration
+const ACCELERATION: number = 0.2; // Increase acceleration for a more responsive feel
+const ROTATION_ACCELERATION: number = 0.02; // Increase rotation acceleration
 const LATERAL_FRICTION: number = 0.95; // Apply lateral friction
 /**
  * The drag applied to the sprite each frame.
@@ -76,17 +76,24 @@ export const updateKeyboardMovement = (delta: number, wallList: Sprite[]) => {
       updateRotationSpeed(ROTATION_DIRECTION.RIGHT, delta, sprite);
     }
 
+    let accelerationX: number;
+    let accelerationY: number;
+
     if (upKeyIsDown) {
-      const accelerationX = ACCELERATION * Math.cos(sprite.rotation);
-      const accelerationY = ACCELERATION * Math.sin(sprite.rotation);
+      accelerationX = ACCELERATION * Math.cos(sprite.rotation);
+      accelerationY = ACCELERATION * Math.sin(sprite.rotation);
 
       sprite.velocity.x += accelerationX;
       sprite.velocity.y += accelerationY;
     } else if (downKeyIsDown) {
-      applyDrag(sprite);
+      accelerationX = ACCELERATION * Math.cos(sprite.rotation);
+      accelerationY = ACCELERATION * Math.sin(sprite.rotation);
+
+      sprite.velocity.x -= accelerationX;
+      sprite.velocity.y -= accelerationY;
     }
 
-    applyLateralFriction(sprite); // Apply lateral friction
+    applyLateralFriction(sprite);
     handleWallCollisions(sprite, wallList);
 
     applyDrag(sprite);
@@ -107,17 +114,13 @@ const handleWallCollisions = (movingSprite: MovingSprite, walls: Sprite[]) => {
         wall.x - movingSprite.x
       );
 
-      // Calculate the opposite force based on the collision angle
       const oppositeForceX = Math.cos(collisionAngle) * ACCELERATION * 2;
       const oppositeForceY = Math.sin(collisionAngle) * ACCELERATION * 2;
-
-      // Apply the opposite force to simulate hitting a wall
       movingSprite.velocity.x -= oppositeForceX;
       movingSprite.velocity.y -= oppositeForceY;
 
-      // Optionally, you can add a rotation effect for a more realistic response
-      // const rotationForce = Math.sign(rotationSpeed) * 0.02;
-      // movingSprite.rotation += rotationForce;
+      const rotationForce = Math.sign(rotationSpeed) * 0.02;
+      movingSprite.rotation += rotationForce;
     }
   });
 };
