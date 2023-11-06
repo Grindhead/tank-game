@@ -33,6 +33,7 @@ let BULLET_LIST: GameSprite[] = [];
  * @param y - the x position to create the bullet at
  * @param angle - the angle in degrees
  * @param reload - does the player need to reload
+ * @param damage - the damage the bullet deals to a target
  * @returns {@link MovingSprite}
  */
 export const createBullet = (
@@ -40,7 +41,8 @@ export const createBullet = (
   y: number,
   angle: number,
   sceneContainer: Container,
-  reload: boolean
+  reload: boolean,
+  damage: number
 ): GameSprite | undefined => {
   if (reloadTime > 0) return;
   const bullet = new GameSprite(Texture.from('hay.png'));
@@ -51,6 +53,7 @@ export const createBullet = (
   const angleInRadians = angle * (Math.PI / 180);
   bullet.velocity.x = Math.cos(angleInRadians) * BULLET_SPEED;
   bullet.velocity.y = Math.sin(angleInRadians) * BULLET_SPEED;
+  bullet.damage = damage;
   bullet.life = BULLET_LIFE;
   sceneContainer.addChildAt(bullet, 0);
   BULLET_LIST.push(bullet);

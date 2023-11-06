@@ -5,12 +5,17 @@ import { Point, Sprite } from 'pixi.js';
  */
 export class GameSprite extends Sprite {
   /**
-   * the movement velocity
+   * the GameSprite movement velocity
    */
   velocity: Point = new Point();
 
   /**
-   * the life of the moving sprite, default to 0
+   * the life of the GameSprite, default to 0
    */
   life: number = 0;
+
+  /**
+   * the damage dealt by the GameSprite. default is 0
+   */
+  damage: number = 0;
 }

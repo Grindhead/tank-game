@@ -158,7 +158,8 @@ export class GameScreen extends AbstractGameScene {
           this.player!.y,
           this.player!.angle - BULLET_SPREAD,
           this.sceneContainer!,
-          false
+          false,
+          10
         );
 
         createBullet(
@@ -166,7 +167,8 @@ export class GameScreen extends AbstractGameScene {
           this.player!.y,
           this.player!.angle + BULLET_SPREAD,
           this.sceneContainer!,
-          true
+          true,
+          10
         );
       } else if (this.currentTankType === 1) {
         createBullet(
@@ -174,7 +176,8 @@ export class GameScreen extends AbstractGameScene {
           this.player!.y,
           this.player!.angle,
           this.sceneContainer!,
-          true
+          true,
+          25
         );
       } else {
         createBullet(
@@ -182,7 +185,8 @@ export class GameScreen extends AbstractGameScene {
           this.player!.y,
           this.player!.angle,
           this.sceneContainer!,
-          false
+          false,
+          20
         );
 
         createBullet(
@@ -190,7 +194,8 @@ export class GameScreen extends AbstractGameScene {
           this.player!.y,
           this.player!.angle - BULLET_SPREAD,
           this.sceneContainer!,
-          false
+          false,
+          20
         );
 
         createBullet(
@@ -198,7 +203,8 @@ export class GameScreen extends AbstractGameScene {
           this.player!.y,
           this.player!.angle + BULLET_SPREAD,
           this.sceneContainer!,
-          true
+          true,
+          20
         );
       }
     }
