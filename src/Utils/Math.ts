@@ -1,11 +1,12 @@
+import { MovingSprite } from './MovingSprite';
+import { Point, Sprite } from 'pixi.js';
+
 /**
  * generates a random integer within a range
  * @param min - the minimum value
  * @param max - the maximum value
  * @returns the calulated value
  */
-
-import { Point, Sprite } from 'pixi.js';
 
 export const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -72,11 +73,54 @@ export const checkCircularCollision = (
 };
 
 /**
- * Checks for circular collision between a PIXI.Sprite and an array of wall PIXI.Sprite objects.
+ * Checks for circular collision between a MovingSprite and an array of rectangle collision target Sprites.
  *
- * @param sprite - The sprite to check for collision.
- * @param walls - An array of wall sprites to check against.
- * @returns True if there is a collision with any wall sprite; otherwise, false.
+ * @param movingSprite - The MovingSprite with a circular hit area.
+ * @param collisionTargets - An array of rectangle collision target Sprites.
+ * @returns An array of collision target Sprites that collide with the movingSprite.
  */
-export const checkWallCollisions = (sprite: Sprite, walls: Sprite[]): boolean =>
-  walls.some((wall) => checkCircularCollision(sprite, wall));
+export const checkCircularSpriteCollisionWithRectangleSpriteList = (
+  movingSprite: MovingSprite,
+  collisionTargets: Sprite[]
+): Sprite[] => {
+  const collidedSprites: Sprite[] = [];
+
+  for (const target of collisionTargets) {
+    if (checkCircularCollisionWithRectangle(movingSprite, target)) {
+      collidedSprites.push(target);
+    }
+  }
+
+  return collidedSprites;
+};
+
+/**
+ * Checks for circular collision between a MovingSprite and a rectangle PIXI.Sprite object.
+ *
+ * @param movingSprite - The MovingSprite with a circular hit area.
+ * @param rectangleSprite - The rectangle Sprite representing a collision target.
+ * @returns True if there is a collision; otherwise, false.
+ */
+export const checkCircularCollisionWithRectangle = (
+  movingSprite: MovingSprite,
+  rectangleSprite: Sprite
+): boolean => {
+  const radius = movingSprite.width / 2;
+  const circleX = movingSprite.x;
+  const circleY = movingSprite.y;
+  const rectX = rectangleSprite.x;
+  const rectY = rectangleSprite.y;
+  const rectWidth = rectangleSprite.width;
+  const rectHeight = rectangleSprite.height;
+
+  // Calculate the nearest point on the rectangle to the circle
+  const closestX = Math.max(rectX, Math.min(circleX, rectX + rectWidth));
+  const closestY = Math.max(rectY, Math.min(circleY, rectY + rectHeight));
+
+  // Calculate the distance between the circle's center and the closest point on the rectangle
+  const distance = Math.sqrt(
+    (circleX - closestX) ** 2 + (circleY - closestY) ** 2
+  );
+
+  return distance < radius;
+};

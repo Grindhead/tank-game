@@ -5,8 +5,8 @@ import { getScale } from '../../Utils/getGameScale';
 import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
 import {
   addKeyboardListeners,
-  addRotateSpriteWithKeyboard,
-  stopRotatingSpritesWithKeyboard,
+  addControlSpriteWithKeyboard,
+  stopControllingAllSpritesWithKeyboard,
   updateKeyboardMovement
 } from '../../Utils/ControlSpriteWithKeyboard';
 import { MovingSprite } from '../../Utils/MovingSprite';
@@ -32,6 +32,11 @@ export class GameScreen extends AbstractGameScene {
    * an array of all the hay bales displayed
    */
   private hayList: Sprite[] | null = null;
+
+  /**
+   * an array of all the collision targets
+   */
+  private collisionTargetList: Sprite[] | null = null;
 
   /**
    * the player tank sprite
@@ -85,7 +90,7 @@ export class GameScreen extends AbstractGameScene {
     this.player.scale.set(this.scale * 4);
     this.player.anchor.set(0.5);
     this.sceneContainer?.addChild(this.player);
-    addRotateSpriteWithKeyboard(this.player);
+    addControlSpriteWithKeyboard(this.player);
   };
 
   /**
@@ -108,7 +113,7 @@ export class GameScreen extends AbstractGameScene {
    */
   sceneUpdate = (delta: number): void => {
     // move the player
-    updateKeyboardMovement(delta);
+    updateKeyboardMovement(delta, this.collisionTargetList!);
     // update bullets
     // check collisions
   };
@@ -135,7 +140,7 @@ export class GameScreen extends AbstractGameScene {
       this.rocksList = null;
     }
 
-    stopRotatingSpritesWithKeyboard();
+    stopControllingAllSpritesWithKeyboard();
   };
 
   /**
@@ -147,6 +152,7 @@ export class GameScreen extends AbstractGameScene {
     this.grid = [];
     this.hayList = [];
     this.rocksList = [];
+    this.collisionTargetList = [];
     const data = levelData.data;
 
     this.spawnPoint = new Point(150, 10);
@@ -172,9 +178,11 @@ export class GameScreen extends AbstractGameScene {
     if (spriteType === 1) {
       sprite = new Sprite(Texture.from('rocks.png'));
       this.rocksList?.push(sprite);
+      this.collisionTargetList?.push(sprite);
     } else if (spriteType === 2) {
       sprite = new Sprite(Texture.from('hay.png'));
       this.hayList?.push(sprite);
+      this.collisionTargetList?.push(sprite);
     } else {
       sprite = new Sprite(Texture.from('tile.png'));
     }
