@@ -64,7 +64,12 @@ export const createBullet = (
  * @param delta - the current time delta
  * @returns void
  */
-export const updateBullets = (delta: number, wallList: Sprite[]): void => {
+export const updateBullets = (
+  delta: number,
+  wallList: Sprite[],
+  gameWidth: number,
+  gameHeight: number
+): void => {
   reloadTime -= delta;
 
   BULLET_LIST = BULLET_LIST.filter((bullet: MovingSprite) => {
@@ -78,6 +83,15 @@ export const updateBullets = (delta: number, wallList: Sprite[]): void => {
       }
     });
 
+    if (
+      bullet.x <= 0 ||
+      bullet.x >= gameWidth ||
+      bullet.y < 0 ||
+      bullet.y > gameHeight
+    ) {
+      bullet.life = 0;
+    }
+
     if (bullet.life <= 0) {
       killBullet(bullet);
     }
@@ -86,7 +100,7 @@ export const updateBullets = (delta: number, wallList: Sprite[]): void => {
   });
 };
 
-const killBullet = (bullet): void => {
+const killBullet = (bullet: MovingSprite): void => {
   bullet.parent.removeChild(bullet);
   bullet.destroy();
 };

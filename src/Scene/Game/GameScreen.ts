@@ -2,7 +2,12 @@ import { Container, Point, Sprite, Texture } from 'pixi.js';
 import { AbstractGameScene, SceneState } from '../Scene';
 import levelData from '../../Resources/JSON/staticMaze.json';
 import { getScale } from '../../Utils/getGameScale';
-import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
+import {
+  GRID_X_COUNT,
+  GRID_Y_COUNT,
+  TILE_HEIGHT,
+  TILE_WIDTH
+} from '../../Utils/Constants';
 import {
   addControlSpriteKeyboardListeners,
   addControlSpriteWithKeyboard,
@@ -148,12 +153,14 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   sceneUpdate = (delta: number): void => {
-    // move the player
     updateKeyboardMovement(delta, this.collisionTargetList!);
-    // update bullets
     this.handleFire();
-    updateBullets(delta, this.collisionTargetList!);
-    // check collisions
+    updateBullets(
+      delta,
+      this.collisionTargetList!,
+      TILE_WIDTH * GRID_X_COUNT,
+      TILE_HEIGHT * GRID_Y_COUNT
+    );
   };
 
   /**
