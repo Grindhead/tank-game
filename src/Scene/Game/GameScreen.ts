@@ -79,7 +79,7 @@ export class GameScreen extends AbstractGameScene {
     this.sceneState = SceneState.LOAD;
 
     this.sceneContainer.eventMode = 'dynamic';
-    this.sceneContainer.cursor = 'crosshair';
+    this.sceneContainer.cursor = 'none';
 
     this.scale = getScale();
 
