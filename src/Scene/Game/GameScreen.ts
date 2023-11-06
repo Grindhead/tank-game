@@ -4,12 +4,13 @@ import levelData from '../../Resources/JSON/staticMaze.json';
 import { getScale } from '../../Utils/getGameScale';
 import { GRID_X_COUNT, TILE_HEIGHT, TILE_WIDTH } from '../../Utils/Constants';
 import {
-  addKeyboardListeners,
+  addControlSpriteKeyboardListeners,
   addControlSpriteWithKeyboard,
   stopControllingAllSpritesWithKeyboard,
   updateKeyboardMovement
 } from '../../Utils/ControlSpriteWithKeyboard';
 import { MovingSprite } from '../../Utils/MovingSprite';
+import { createBullet, updateBullets } from '../../Utils/BulletController';
 
 /**
  * the type of sprite to create
@@ -76,7 +77,24 @@ export class GameScreen extends AbstractGameScene {
     this.createGrid();
     this.createPlayer();
     this.updateDisplay();
-    addKeyboardListeners();
+    addControlSpriteKeyboardListeners();
+
+    document.addEventListener('keydown', this.handleFire);
+  };
+
+  /**
+   * handle a player firing using the spacebar
+   * @returns void
+   */
+  handleFire = (e: KeyboardEvent): void => {
+    if (e.key === ' ') {
+      createBullet(
+        this.player!.x,
+        this.player!.y,
+        this.player!.angle,
+        this.sceneContainer!
+      );
+    }
   };
 
   /**
@@ -89,7 +107,7 @@ export class GameScreen extends AbstractGameScene {
     this.player.y = this.spawnPoint.y;
     this.player.scale.set(this.scale * 4);
     this.player.anchor.set(0.5);
-    this.sceneContainer?.addChild(this.player);
+    this.sceneContainer!.addChild(this.player);
     addControlSpriteWithKeyboard(this.player);
   };
 
@@ -115,6 +133,7 @@ export class GameScreen extends AbstractGameScene {
     // move the player
     updateKeyboardMovement(delta, this.collisionTargetList!);
     // update bullets
+    updateBullets(delta);
     // check collisions
   };
 
@@ -141,6 +160,8 @@ export class GameScreen extends AbstractGameScene {
     }
 
     stopControllingAllSpritesWithKeyboard();
+
+    document.removeEventListener('keydown', this.handleFire);
   };
 
   /**
@@ -177,17 +198,17 @@ export class GameScreen extends AbstractGameScene {
     let sprite: Sprite;
     if (spriteType === 1) {
       sprite = new Sprite(Texture.from('rocks.png'));
-      this.rocksList?.push(sprite);
-      this.collisionTargetList?.push(sprite);
+      this.rocksList!.push(sprite);
+      this.collisionTargetList!.push(sprite);
     } else if (spriteType === 2) {
       sprite = new Sprite(Texture.from('hay.png'));
-      this.hayList?.push(sprite);
-      this.collisionTargetList?.push(sprite);
+      this.hayList!.push(sprite);
+      this.collisionTargetList!.push(sprite);
     } else {
       sprite = new Sprite(Texture.from('tile.png'));
     }
 
-    this.sceneContainer?.addChild(sprite);
+    this.sceneContainer!.addChild(sprite);
     return sprite;
   };
 }

@@ -25,12 +25,12 @@ let rightKeyIsDown: boolean = false;
 let upKeyIsDown: boolean = false;
 let downKeyIsDown: boolean = false;
 
-export const addKeyboardListeners = (): void => {
+export const addControlSpriteKeyboardListeners = (): void => {
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
 };
 
-const removeKeyboardListeners = (): void => {
+const removeControlSpriteKeyboardListeners = (): void => {
   document.removeEventListener('keydown', handleKeyDown);
   document.removeEventListener('keyup', handleKeyUp);
 };
@@ -65,7 +65,7 @@ export const addControlSpriteWithKeyboard = (sprite: MovingSprite): void => {
 
 export const stopControllingAllSpritesWithKeyboard = (): void => {
   spriteList = [];
-  removeKeyboardListeners();
+  removeControlSpriteKeyboardListeners();
 };
 
 export const updateKeyboardMovement = (delta: number, wallList: Sprite[]) => {
