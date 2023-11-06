@@ -1,88 +1,36 @@
+import { Sprite } from 'pixi.js';
 import { clamp } from './Math';
 import { MovingSprite } from './MovingSprite';
 
-/**
- * the direction in which a sprite is rotating
- */
 enum ROTATION_DIRECTION {
   LEFT,
   RIGHT
 }
 
-/**
- * the max speed a sprite can rotate at
- */
-const MAX_ROTATION_SPEED: number = 0.12;
+const MAX_SPEED: number = 5;
+const MAX_ROTATION_SPEED: number = 0.02;
+const ACCELERATION: number = 0.2; // Increase acceleration for a more responsive feel
+const ROTATION_ACCELERATION: number = 0.005; // Increase rotation acceleration
+const ROTATION_DRAG: number = 0.95; // Adjust rotation drag
+const DRAG: number = 0.94;
 
-/**
- * the speed at which a sprites accelteration increases
- */
-const ROTATION_ACCELERATION: number = 0.005;
-
-/**
- * the speed at which a sprites rotation decreases
- */
-const ROTATION_DRAG: number = 0.92;
-
-/**
- * the speed at which a sprite will accelerate each frame
- */
-const ACCELERATION: number = 0.1;
-
-/**
- * drag applied to the sprite each frame
- */
-const DRAG: number = 0.05;
-
-/**
- * an array of all the sprites to be controlled by the keyboard
- */
 let spriteList: MovingSprite[] = [];
-
-/**
- * the speed at which the sprites are currently rotating
- */
 let rotationSpeed: number = 0;
-
-/**
- * is the left key down
- */
 let leftKeyIsDown: boolean = false;
-
-/**
- * is the right key down
- */
 let rightKeyIsDown: boolean = false;
-
-/** is the up key down */
 let upKeyIsDown: boolean = false;
-
-/** is the down key down */
 let downKeyIsDown: boolean = false;
 
-/**
- * Listen for keyboard events and update key states.
- * @returns - void
- */
 export const addKeyboardListeners = (): void => {
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
 };
 
-/**
- * Remove keyboard events.
- * @returns - void
- */
 const removeKeyboardListeners = (): void => {
   document.removeEventListener('keydown', handleKeyDown);
   document.removeEventListener('keyup', handleKeyUp);
 };
 
-/**
- * Handle key down events to update key states.
- * @param e - The KeyboardEvent.
- * @returns - void
- */
 const handleKeyDown = (e: KeyboardEvent): void => {
   if (e.key === 'ArrowLeft' || e.key === 'a') {
     leftKeyIsDown = true;
@@ -95,11 +43,6 @@ const handleKeyDown = (e: KeyboardEvent): void => {
   }
 };
 
-/**
- * Handle key up events to update key states.
- * @param e - The KeyboardEvent.
- * @returns - void
- */
 const handleKeyUp = (e: KeyboardEvent): void => {
   if (e.key === 'ArrowLeft' || e.key === 'a') {
     leftKeyIsDown = false;
@@ -112,29 +55,15 @@ const handleKeyUp = (e: KeyboardEvent): void => {
   }
 };
 
-/**
- * Add a sprite to be rotated each frame.
- * @param sprite - The sprite to rotate each frame.
- * @returns - void
- */
 export const addRotateSpriteWithKeyboard = (sprite: MovingSprite): void => {
   spriteList.push(sprite);
 };
 
-/**
- * Removes the event listener for mouse movement.
- * @returns - void
- */
 export const stopRotatingSpritesWithKeyboard = (): void => {
   spriteList = [];
   removeKeyboardListeners();
 };
 
-/**
- * Updates and rotates an array of sprites based on keyboard input
- * @param delta - The time delta.
- * @returns - void
- */
 export const updateKeyboardMovement = (delta: number) => {
   spriteList.forEach((sprite) => {
     if (leftKeyIsDown) {
@@ -144,35 +73,49 @@ export const updateKeyboardMovement = (delta: number) => {
     }
 
     if (upKeyIsDown) {
-      sprite.velocity.x += ACCELERATION * delta;
+      const accelerationX = ACCELERATION * Math.cos(sprite.rotation);
+      const accelerationY = ACCELERATION * Math.sin(sprite.rotation);
+
+      sprite.velocity.x += accelerationX;
+      sprite.velocity.y += accelerationY;
     } else if (downKeyIsDown) {
-      sprite.velocity.x -= ACCELERATION * delta;
+      applyBrake(sprite); // Apply braking when the down key is pressed
     }
 
-    if (Math.abs(sprite.velocity.x) >= 0.1) {
-      sprite.velocity.x -= DRAG;
-    } else {
-      sprite.velocity.x = 0;
-    }
-
+    applyDrag(sprite);
     rotationSpeed *= ROTATION_DRAG;
     sprite.rotation += rotationSpeed;
+    sprite.velocity.x = clamp(sprite.velocity.x, -MAX_SPEED, MAX_SPEED);
+    sprite.velocity.y = clamp(sprite.velocity.y, -MAX_SPEED, MAX_SPEED);
+    sprite.x += sprite.velocity.x;
+    sprite.y += sprite.velocity.y;
   });
 };
 
-/**
- * rotate all sprites based on keyboard input (WASD or arrows)
- * @param direction - the {@link ROTATION_DIRECTION} to update the {@link rotationSpeed}
- * @param delta  - the current time delta
- * @returns - void
- */
+const applyDrag = (sprite: MovingSprite): void => {
+  sprite.velocity.x *= DRAG;
+  sprite.velocity.y *= DRAG;
+};
+
+const applyBrake = (sprite: MovingSprite): void => {
+  if (
+    Math.abs(sprite.velocity.x) >= 0.1 ||
+    Math.abs(sprite.velocity.y) >= 0.1
+  ) {
+    // Apply braking to slow down when the down key is pressed
+    sprite.velocity.x *= 0.9; // Adjust the braking factor for desired behavior
+    sprite.velocity.y *= 0.9;
+  } else {
+    sprite.velocity.x = 0;
+    sprite.velocity.y = 0;
+  }
+};
+
 const updateRotationSpeed = (direction: number, delta: number): void => {
   if (direction === ROTATION_DIRECTION.LEFT) {
     rotationSpeed -= ROTATION_ACCELERATION * delta;
   } else if (direction === ROTATION_DIRECTION.RIGHT) {
     rotationSpeed += ROTATION_ACCELERATION * delta;
-  } else {
-    throw new Error('Sprite rotation direction not recognised: ' + direction);
   }
 
   rotationSpeed = clamp(rotationSpeed, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
