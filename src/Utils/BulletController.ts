@@ -45,11 +45,11 @@ export const createBullet = (
   damage: number
 ): GameSprite | undefined => {
   if (reloadTime > 0) return;
-  const bullet = new GameSprite(Texture.from('hay.png'));
+  const bullet = new GameSprite(Texture.from('bullet.png'));
   bullet.x = x;
   bullet.y = y;
   bullet.anchor.set(0.5);
-
+  bullet.angle = angle;
   const angleInRadians = angle * (Math.PI / 180);
   bullet.velocity.x = Math.cos(angleInRadians) * BULLET_SPEED;
   bullet.velocity.y = Math.sin(angleInRadians) * BULLET_SPEED;

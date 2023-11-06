@@ -1,4 +1,4 @@
-import { Container, Point, Sprite, Texture } from 'pixi.js';
+import { Container, Graphics, Point, Sprite, Texture } from 'pixi.js';
 import { AbstractGameScene, SceneState } from '../Scene';
 import levelData from '../../Resources/JSON/staticMaze.json';
 import { getScale } from '../../Utils/getGameScale';
@@ -16,6 +16,7 @@ import {
 } from '../../Utils/ControlSpriteWithKeyboard';
 import { GameSprite } from './GameSprite';
 import { createBullet, updateBullets } from '../../Utils/BulletController';
+import { drawTireMark, updateTireMarks } from '../../Utils/drawTireMarks';
 
 /**
  * the type of sprite to create
@@ -85,6 +86,11 @@ export class GameScreen extends AbstractGameScene {
   private currentTankType: TankType = 0;
 
   /**
+   * the {@link Graphics} object to draw tire marks too
+   */
+  private tireMarks: Graphics | null = null;
+
+  /**
    * sets up the scene
    * @param sceneContainer - the Container for the scene
    * @returns void
@@ -100,6 +106,7 @@ export class GameScreen extends AbstractGameScene {
 
     this.spawnPoint = new Point();
     this.createGrid();
+    this.createTireMarks();
     this.createPlayer();
     this.updateDisplay();
     addControlSpriteKeyboardListeners();
@@ -108,7 +115,20 @@ export class GameScreen extends AbstractGameScene {
     document.addEventListener('keyup', this.handleKeyUp);
   };
 
-  handleKeyDown = (e: KeyboardEvent) => {
+  /**
+   * create the {@link Graphics} used to draw the tire marks and add to the display list
+   */
+  createTireMarks = (): void => {
+    this.tireMarks = new Graphics();
+    this.sceneContainer!.addChild(this.tireMarks);
+  };
+
+  /**
+   * handle a key down event
+   * @param e - the {@link KeyboardEvent}
+   * @returns void
+   */
+  handleKeyDown = (e: KeyboardEvent): void => {
     if (e.key === ' ') {
       this.isSpaceDown = true;
     } else if (e.key === 't') {
@@ -116,12 +136,21 @@ export class GameScreen extends AbstractGameScene {
     }
   };
 
-  handleKeyUp = (e: KeyboardEvent) => {
+  /**
+   * handle a key up event
+   * @param e - the {@link KeyboardEvent}
+   * @returns void
+   */
+  handleKeyUp = (e: KeyboardEvent): void => {
     if (e.key === ' ') {
       this.isSpaceDown = false;
     }
   };
 
+  /**
+   * change the currently used tank
+   * @returns void
+   */
   changeTank = (): void => {
     this.currentTankType++;
 
@@ -257,6 +286,8 @@ export class GameScreen extends AbstractGameScene {
       TILE_WIDTH * GRID_X_COUNT,
       TILE_HEIGHT * GRID_Y_COUNT
     );
+    drawTireMark(this.tireMarks!, this.player!);
+    updateTireMarks(this.tireMarks!, 0.01, delta);
   };
 
   /**
@@ -331,6 +362,7 @@ export class GameScreen extends AbstractGameScene {
       this.collisionTargetList!.push(sprite);
     } else {
       sprite = new GameSprite(Texture.from('tile.png'));
+      sprite.alpha = 0.2;
     }
 
     this.sceneContainer!.addChild(sprite);
