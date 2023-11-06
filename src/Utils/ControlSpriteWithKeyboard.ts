@@ -1,6 +1,6 @@
 import { Sprite } from 'pixi.js';
 import { checkCircularCollisionWithRectangle, clamp } from './Math';
-import { MovingSprite } from './MovingSprite';
+import { GameSprite } from '../Scene/Game/GameSprite';
 
 enum ROTATION_DIRECTION {
   LEFT,
@@ -18,7 +18,7 @@ const LATERAL_FRICTION: number = 0.95; // Apply lateral friction
 const ROTATION_DRAG: number = 0.95; // Adjust rotation drag
 const DRAG: number = 0.98;
 
-let spriteList: MovingSprite[] = [];
+let spriteList: GameSprite[] = [];
 let rotationSpeed: number = 0;
 let leftKeyIsDown: boolean = false;
 let rightKeyIsDown: boolean = false;
@@ -59,7 +59,7 @@ const handleKeyUp = (e: KeyboardEvent): void => {
   }
 };
 
-export const addControlSpriteWithKeyboard = (sprite: MovingSprite): void => {
+export const addControlSpriteWithKeyboard = (sprite: GameSprite): void => {
   spriteList.push(sprite);
 };
 
@@ -114,7 +114,7 @@ export const updateKeyboardMovement = (
   });
 };
 
-const handleWallCollisions = (movingSprite: MovingSprite, walls: Sprite[]) => {
+const handleWallCollisions = (movingSprite: GameSprite, walls: Sprite[]) => {
   walls.forEach((wall) => {
     if (checkCircularCollisionWithRectangle(movingSprite, wall)) {
       const collisionAngle = Math.atan2(
@@ -134,12 +134,12 @@ const handleWallCollisions = (movingSprite: MovingSprite, walls: Sprite[]) => {
   });
 };
 
-const applyDrag = (sprite: MovingSprite): void => {
+const applyDrag = (sprite: GameSprite): void => {
   sprite.velocity.x *= DRAG;
   sprite.velocity.y *= DRAG;
 };
 
-const applyLateralFriction = (sprite: MovingSprite): void => {
+const applyLateralFriction = (sprite: GameSprite): void => {
   sprite.velocity.x *= LATERAL_FRICTION;
   sprite.velocity.y *= LATERAL_FRICTION;
 };
@@ -147,7 +147,7 @@ const applyLateralFriction = (sprite: MovingSprite): void => {
 const updateRotationSpeed = (
   direction: number,
   delta: number,
-  sprite: MovingSprite
+  sprite: GameSprite
 ): void => {
   if (direction === ROTATION_DIRECTION.LEFT) {
     rotationSpeed -= ROTATION_ACCELERATION * delta;

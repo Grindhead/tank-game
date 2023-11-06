@@ -14,7 +14,7 @@ import {
   stopControllingAllSpritesWithKeyboard,
   updateKeyboardMovement
 } from '../../Utils/ControlSpriteWithKeyboard';
-import { MovingSprite } from '../../Utils/MovingSprite';
+import { GameSprite } from './GameSprite';
 import { createBullet, updateBullets } from '../../Utils/BulletController';
 
 /**
@@ -42,12 +42,12 @@ export class GameScreen extends AbstractGameScene {
   /**
    * an array of all the collision targets
    */
-  private collisionTargetList: Sprite[] | null = null;
+  private collisionTargetList: GameSprite[] | null = null;
 
   /**
    * the player tank sprite
    */
-  private player: MovingSprite | null = null;
+  private player: GameSprite | null = null;
 
   /**
    * the player spawn point
@@ -125,7 +125,7 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   createPlayer = (): void => {
-    this.player = new MovingSprite(Texture.from('tank.png'));
+    this.player = new GameSprite(Texture.from('tank.png'));
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
     this.player.scale.set(this.scale * 4);
@@ -160,7 +160,7 @@ export class GameScreen extends AbstractGameScene {
       TILE_HEIGHT * GRID_Y_COUNT
     );
     this.handleFire();
-    updateBullets(
+    this.collisionTargetList = updateBullets(
       delta,
       this.collisionTargetList!,
       TILE_WIDTH * GRID_X_COUNT,
@@ -227,17 +227,19 @@ export class GameScreen extends AbstractGameScene {
    * @returns Sprite
    */
   createSprite = (spriteType: SpriteType): Sprite => {
-    let sprite: Sprite;
+    let sprite: GameSprite;
     if (spriteType === 1) {
-      sprite = new Sprite(Texture.from('rocks.png'));
+      sprite = new GameSprite(Texture.from('rocks.png'));
       this.rocksList!.push(sprite);
+      sprite.life = Infinity;
       this.collisionTargetList!.push(sprite);
     } else if (spriteType === 2) {
-      sprite = new Sprite(Texture.from('hay.png'));
+      sprite = new GameSprite(Texture.from('hay.png'));
+      sprite.life = 100;
       this.hayList!.push(sprite);
       this.collisionTargetList!.push(sprite);
     } else {
-      sprite = new Sprite(Texture.from('tile.png'));
+      sprite = new GameSprite(Texture.from('tile.png'));
     }
 
     this.sceneContainer!.addChild(sprite);

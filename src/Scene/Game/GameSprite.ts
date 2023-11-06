@@ -3,7 +3,7 @@ import { Point, Sprite } from 'pixi.js';
 /**
  * a moving sprite
  */
-export class MovingSprite extends Sprite {
+export class GameSprite extends Sprite {
   /**
    * the movement velocity
    */

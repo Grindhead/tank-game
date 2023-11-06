@@ -5,12 +5,12 @@ import {
 } from './Math';
 import { updateSpriteRotation } from './rotateSpriteTowardsMouse';
 import { mousePosition } from './getMousePosition';
-import { MovingSprite } from './MovingSprite';
+import { GameSprite } from '../Scene/Game/GameSprite';
 
 /**
  * An array of all the sprites
  */
-const spriteList: MovingSprite[] = [];
+const spriteList: GameSprite[] = [];
 
 /**
  * Moves an array of sprites towards the mouse position.
@@ -38,7 +38,7 @@ export const updateMoveSpriteTowardsMouse = (
   const acceleration = 1;
   const easing = 2;
 
-  spriteList.forEach((sprite: MovingSprite) => {
+  spriteList.forEach((sprite: GameSprite) => {
     const spritePosition = sprite.getGlobalPosition();
     // Calculate direction vector towards the mouse
     const direction = calculateDirectionVector(spritePosition, mousePosition); // Assuming mousePosition is imported

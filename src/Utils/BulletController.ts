@@ -1,5 +1,5 @@
-import { Container, Sprite, Texture } from 'pixi.js';
-import { MovingSprite } from './MovingSprite';
+import { Container, Texture } from 'pixi.js';
+import { GameSprite } from '../Scene/Game/GameSprite';
 import { checkCircularCollisionWithRectangle } from './Math';
 
 /**
@@ -25,7 +25,7 @@ let reloadTime: number = 0;
 /**
  * an array of all the bullets
  */
-let BULLET_LIST: MovingSprite[] = [];
+let BULLET_LIST: GameSprite[] = [];
 
 /**
  * create a moving bullet at an x and y location with a angle to set a velocity
@@ -39,9 +39,9 @@ export const createBullet = (
   y: number,
   angle: number,
   sceneContainer: Container
-): MovingSprite | undefined => {
+): GameSprite | undefined => {
   if (reloadTime > 0) return;
-  const bullet = new MovingSprite(Texture.from('hay.png'));
+  const bullet = new GameSprite(Texture.from('hay.png'));
   bullet.x = x;
   bullet.y = y;
   bullet.anchor.set(0.5);
@@ -62,24 +62,25 @@ export const createBullet = (
 /**
  * update the position of each bullet
  * @param delta - the current time delta
- * @returns void
+ * @returns an array of {@link GameSprite}
  */
 export const updateBullets = (
   delta: number,
-  wallList: Sprite[],
+  targetList: GameSprite[],
   gameWidth: number,
   gameHeight: number
-): void => {
+): GameSprite[] => {
   reloadTime -= delta;
 
-  BULLET_LIST = BULLET_LIST.filter((bullet: MovingSprite) => {
+  BULLET_LIST = BULLET_LIST.filter((bullet: GameSprite) => {
     bullet.x += bullet.velocity.x * delta;
     bullet.y += bullet.velocity.y * delta;
     bullet.life! -= delta;
 
-    wallList.forEach((wall) => {
-      if (checkCircularCollisionWithRectangle(bullet, wall)) {
+    targetList.forEach((target) => {
+      if (checkCircularCollisionWithRectangle(bullet, target)) {
         bullet.life = 0;
+        target.life -= 35;
       }
     });
 
@@ -93,14 +94,29 @@ export const updateBullets = (
     }
 
     if (bullet.life <= 0) {
-      killBullet(bullet);
+      killSprite(bullet);
     }
 
     return bullet.life > 0;
   });
+
+  targetList = targetList.filter((target) => {
+    if (target.life <= 0) {
+      killSprite(target);
+    }
+
+    return target.life > 0;
+  });
+
+  return targetList;
 };
 
-const killBullet = (bullet: MovingSprite): void => {
-  bullet.parent.removeChild(bullet);
-  bullet.destroy();
+/**
+ * destroys a sprite and remove it from the display list
+ * @param sprite - the sprite to kill
+ * @returns void
+ */
+const killSprite = (sprite: GameSprite): void => {
+  sprite.parent.removeChild(sprite);
+  sprite.destroy();
 };

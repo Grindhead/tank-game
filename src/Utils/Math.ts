@@ -1,4 +1,4 @@
-import { MovingSprite } from './MovingSprite';
+import { GameSprite } from '../Scene/Game/GameSprite';
 import { Point, Sprite } from 'pixi.js';
 
 /**
@@ -80,7 +80,7 @@ export const checkCircularCollision = (
  * @returns An array of collision target Sprites that collide with the movingSprite.
  */
 export const checkCircularSpriteCollisionWithRectangleSpriteList = (
-  movingSprite: MovingSprite,
+  movingSprite: GameSprite,
   collisionTargets: Sprite[]
 ): Sprite[] => {
   const collidedSprites: Sprite[] = [];
@@ -102,7 +102,7 @@ export const checkCircularSpriteCollisionWithRectangleSpriteList = (
  * @returns True if there is a collision; otherwise, false.
  */
 export const checkCircularCollisionWithRectangle = (
-  movingSprite: MovingSprite,
+  movingSprite: GameSprite,
   rectangleSprite: Sprite
 ): boolean => {
   const radius = movingSprite.width / 2;
