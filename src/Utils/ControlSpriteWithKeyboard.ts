@@ -6,10 +6,10 @@ enum ROTATION_DIRECTION {
   RIGHT
 }
 
-const MAX_SPEED: number = 5;
-const MAX_ROTATION_SPEED: number = 0.02;
+const MAX_SPEED: number = 34;
+const MAX_ROTATION_SPEED: number = 10;
 const ACCELERATION: number = 0.1; // Increase acceleration for a more responsive feel
-const ROTATION_ACCELERATION: number = 0.01; // Increase rotation acceleration
+const ROTATION_ACCELERATION: number = 0.04; // Increase rotation acceleration
 const LATERAL_FRICTION: number = 0.95; // Apply lateral friction
 /**
  * The drag applied to the sprite each frame.
@@ -70,9 +70,9 @@ export const stopRotatingSpritesWithKeyboard = (): void => {
 export const updateKeyboardMovement = (delta: number) => {
   spriteList.forEach((sprite) => {
     if (leftKeyIsDown) {
-      updateRotationSpeed(ROTATION_DIRECTION.LEFT, delta);
+      updateRotationSpeed(ROTATION_DIRECTION.LEFT, delta, sprite);
     } else if (rightKeyIsDown) {
-      updateRotationSpeed(ROTATION_DIRECTION.RIGHT, delta);
+      updateRotationSpeed(ROTATION_DIRECTION.RIGHT, delta, sprite);
     }
 
     if (upKeyIsDown) {
@@ -83,10 +83,9 @@ export const updateKeyboardMovement = (delta: number) => {
       sprite.velocity.y += accelerationY;
     } else if (downKeyIsDown) {
       applyDrag(sprite);
-    } else {
-      applyLateralFriction(sprite); // Apply lateral friction when no acceleration is applied
     }
 
+    applyLateralFriction(sprite); // Apply lateral friction
     applyDrag(sprite);
     rotationSpeed *= ROTATION_DRAG;
     sprite.rotation += rotationSpeed;
@@ -107,12 +106,24 @@ const applyLateralFriction = (sprite: MovingSprite): void => {
   sprite.velocity.y *= LATERAL_FRICTION;
 };
 
-const updateRotationSpeed = (direction: number, delta: number): void => {
+const updateRotationSpeed = (
+  direction: number,
+  delta: number,
+  sprite: MovingSprite
+): void => {
   if (direction === ROTATION_DIRECTION.LEFT) {
     rotationSpeed -= ROTATION_ACCELERATION * delta;
   } else if (direction === ROTATION_DIRECTION.RIGHT) {
     rotationSpeed += ROTATION_ACCELERATION * delta;
   }
 
+  // Modify rotation speed based on sprite's speed
+  const speed = Math.sqrt(
+    sprite.velocity.x * sprite.velocity.x +
+      sprite.velocity.y * sprite.velocity.y
+  );
+  const speedFactor = (speed / MAX_SPEED) * 10;
+  console.log(speedFactor);
+  rotationSpeed *= speedFactor;
   rotationSpeed = clamp(rotationSpeed, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
 };
