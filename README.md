@@ -6,7 +6,9 @@
 
 3. **Install pnpm:** run `npm install -g pnpm`
 
-# pnpm install - install dependancies
+4. **install dependancies:** run `pnpm install`
+
+5. **run game:** run `pnpm start`
 
 # pnpm start - runs the app in dev mode and also runs `yarn docs`
 
