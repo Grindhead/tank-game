@@ -152,7 +152,7 @@ export class GameScreen extends AbstractGameScene {
     updateKeyboardMovement(delta, this.collisionTargetList!);
     // update bullets
     this.handleFire();
-    updateBullets(delta);
+    updateBullets(delta, this.collisionTargetList!);
     // check collisions
   };
 

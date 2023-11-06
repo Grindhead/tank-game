@@ -1,5 +1,6 @@
-import { Container, Texture } from 'pixi.js';
+import { Container, Sprite, Texture } from 'pixi.js';
 import { MovingSprite } from './MovingSprite';
+import { checkCircularCollisionWithRectangle } from './Math';
 
 /**
  * the life of the bullet
@@ -50,7 +51,7 @@ export const createBullet = (
   bullet.velocity.y = Math.sin(angleInRadians) * BULLET_SPEED;
 
   bullet.life = BULLET_LIFE;
-  sceneContainer.addChild(bullet);
+  sceneContainer.addChildAt(bullet, 0);
   BULLET_LIST.push(bullet);
 
   reloadTime = RELOAD_COOLDOWN;
@@ -63,7 +64,7 @@ export const createBullet = (
  * @param delta - the current time delta
  * @returns void
  */
-export const updateBullets = (delta: number): void => {
+export const updateBullets = (delta: number, wallList: Sprite[]): void => {
   reloadTime -= delta;
 
   BULLET_LIST = BULLET_LIST.filter((bullet: MovingSprite) => {
@@ -71,11 +72,21 @@ export const updateBullets = (delta: number): void => {
     bullet.y += bullet.velocity.y * delta;
     bullet.life! -= delta;
 
+    wallList.forEach((wall) => {
+      if (checkCircularCollisionWithRectangle(bullet, wall)) {
+        bullet.life = 0;
+      }
+    });
+
     if (bullet.life <= 0) {
-      bullet.parent.removeChild(bullet);
-      bullet.destroy();
+      killBullet(bullet);
     }
 
     return bullet.life > 0;
   });
+};
+
+const killBullet = (bullet): void => {
+  bullet.parent.removeChild(bullet);
+  bullet.destroy();
 };
