@@ -12,6 +12,16 @@ const BULLET_LIFE: number = 100;
 const BULLET_SPEED: number = 10;
 
 /**
+ * the time it takes to reload
+ */
+const RELOAD_COOLDOWN: number = 10;
+
+/**
+ * time remaining until we have reloaded
+ */
+let reloadTime: number = 0;
+
+/**
  * an array of all the bullets
  */
 let BULLET_LIST: MovingSprite[] = [];
@@ -28,7 +38,8 @@ export const createBullet = (
   y: number,
   angle: number,
   sceneContainer: Container
-): MovingSprite => {
+): MovingSprite | undefined => {
+  if (reloadTime > 0) return;
   const bullet = new MovingSprite(Texture.from('hay.png'));
   bullet.x = x;
   bullet.y = y;
@@ -41,6 +52,9 @@ export const createBullet = (
   bullet.life = BULLET_LIFE;
   sceneContainer.addChild(bullet);
   BULLET_LIST.push(bullet);
+
+  reloadTime = RELOAD_COOLDOWN;
+
   return bullet;
 };
 
@@ -50,6 +64,8 @@ export const createBullet = (
  * @returns void
  */
 export const updateBullets = (delta: number): void => {
+  reloadTime -= delta;
+
   BULLET_LIST = BULLET_LIST.filter((bullet: MovingSprite) => {
     bullet.x += bullet.velocity.x * delta;
     bullet.y += bullet.velocity.y * delta;

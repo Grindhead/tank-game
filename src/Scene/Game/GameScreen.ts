@@ -60,6 +60,11 @@ export class GameScreen extends AbstractGameScene {
   private scale: number = 0;
 
   /**
+   * is the space button down
+   */
+  private isSpaceDown: boolean = false;
+
+  /**
    * sets up the scene
    * @param sceneContainer - the Container for the scene
    * @returns void
@@ -79,15 +84,28 @@ export class GameScreen extends AbstractGameScene {
     this.updateDisplay();
     addControlSpriteKeyboardListeners();
 
-    document.addEventListener('keydown', this.handleFire);
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
+  };
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === ' ') {
+      this.isSpaceDown = true;
+    }
+  };
+
+  handleKeyUp = (e: KeyboardEvent) => {
+    if (e.key === ' ') {
+      this.isSpaceDown = false;
+    }
   };
 
   /**
    * handle a player firing using the spacebar
    * @returns void
    */
-  handleFire = (e: KeyboardEvent): void => {
-    if (e.key === ' ') {
+  handleFire = (): void => {
+    if (this.isSpaceDown) {
       createBullet(
         this.player!.x,
         this.player!.y,
@@ -133,6 +151,7 @@ export class GameScreen extends AbstractGameScene {
     // move the player
     updateKeyboardMovement(delta, this.collisionTargetList!);
     // update bullets
+    this.handleFire();
     updateBullets(delta);
     // check collisions
   };
@@ -161,7 +180,8 @@ export class GameScreen extends AbstractGameScene {
 
     stopControllingAllSpritesWithKeyboard();
 
-    document.removeEventListener('keydown', this.handleFire);
+    document.removeEventListener('keydown', this.handleKeyDown);
+    document.removeEventListener('keyup', this.handleKeyUp);
   };
 
   /**
