@@ -1,20 +1,23 @@
 ## Installation instructions
 
-install node
-run `npm install -g pnpm`
+1. **Install Node.js:** You can download and install Node.js from the [official website](https://nodejs.org/).
 
-# Yarn install - install dependancies
+2. **Install TexturePackerCLI:** You can find installation instructions for TexturePackerCLI on their [official website](https://www.codeandweb.com/texturepacker/download).
 
-# Yarn start - runs the app in dev mode and also runs `yarn docs`
+3. **Install pnpm:** run `npm install -g pnpm`
 
-# Yarn build - generates a production build to the dist directory
+# pnpm install - install dependancies
 
-# Yarn lint - runs a linter over the project
+# pnpm start - runs the app in dev mode and also runs `yarn docs`
 
-# Yarn docs - generates documentation at localhost:8080/docs
+# pnpm build - generates a production build to the dist directory
 
-# yarn compress - compresses atlas.png using pngquant. Uses src/Resources/Images and outputs to dist
+# pnpm lint - runs a linter over the project
+
+# pnpm docs - generates documentation at localhost:8080/docs
+
+# pnpm images - generates texture atlases and compresses them using TexturePackerCLI
 
 # pnpm changeset - creates a .md file to document semver changes
 
-You need to create the texture atlas by publishing the .tps file using TexturePacker
+# pnpm create-level - create a new level

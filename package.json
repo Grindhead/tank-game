@@ -4,7 +4,7 @@
   "description": "Tank game using Pixi.js",
   "type": "module",
   "scripts": {
-    "build": "webpack --mode production --config webpack.config.mjs && pnpm images",
+    "build": "pnpm lint && webpack --mode production --config webpack.config.mjs && pnpm images",
     "docs": "typedoc --options typedoc.json",
     "start": "pnpm docs && webpack-dev-server --mode development && pnpm open http://localhost:8080",
     "lint": "eslint -f unix \"src/**/*.{ts,tsx}\"",
