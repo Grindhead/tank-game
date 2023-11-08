@@ -1,6 +1,6 @@
 import { Sprite } from 'pixi.js';
 import { checkCircularCollisionWithRectangle, clamp } from './Math';
-import { GameSprite } from '../Scene/Game/GameSprite';
+import { GameSprite } from './GameSprite';
 
 enum ROTATION_DIRECTION {
   LEFT,

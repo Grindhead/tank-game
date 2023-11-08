@@ -1,4 +1,4 @@
-import { GameSprite } from '../Scene/Game/GameSprite';
+import { GameSprite } from './GameSprite';
 import { Point, Sprite } from 'pixi.js';
 
 /**

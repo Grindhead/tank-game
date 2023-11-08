@@ -14,7 +14,7 @@ import {
   stopControllingAllSpritesWithKeyboard,
   updateKeyboardMovement
 } from '../../Utils/ControlSpriteWithKeyboard';
-import { GameSprite } from './GameSprite';
+import { GameSprite } from '../../Utils/GameSprite';
 import { createBullet, updateBullets } from '../../Utils/BulletController';
 import { drawTireMark, updateTireMarks } from '../../Utils/drawTireMarks';
 

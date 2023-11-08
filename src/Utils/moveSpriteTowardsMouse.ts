@@ -5,7 +5,7 @@ import {
 } from './Math';
 import { updateSpriteRotation } from './rotateSpriteTowardsMouse';
 import { mousePosition } from './getMousePosition';
-import { GameSprite } from '../Scene/Game/GameSprite';
+import { GameSprite } from './GameSprite';
 
 /**
  * An array of all the sprites

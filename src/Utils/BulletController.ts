@@ -1,5 +1,5 @@
 import { Container, Texture } from 'pixi.js';
-import { GameSprite } from '../Scene/Game/GameSprite';
+import { GameSprite } from './GameSprite';
 import { checkCircularCollisionWithRectangle } from './Math';
 
 /**
