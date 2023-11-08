@@ -2,7 +2,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-
+import webpack from 'webpack';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -77,6 +77,7 @@ export default {
       name: 'Demo for PIXI Games',
       inject: true
     }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         {
