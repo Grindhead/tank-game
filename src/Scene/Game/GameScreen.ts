@@ -1,22 +1,33 @@
-import { Container, Graphics, Point, Sprite, Texture } from 'pixi.js';
-import { AbstractGameScene, SceneState } from '../Scene';
+import {
+  Application,
+  Container,
+  Graphics,
+  Point,
+  Sprite,
+  Texture
+} from 'pixi.js';
 import levelData from '../../Resources/JSON/staticMaze.json';
-import { getScale } from '../../Utils/getGameScale';
 import {
   GRID_X_COUNT,
   GRID_Y_COUNT,
+  PAGE_MAIN_MENU,
   TILE_HEIGHT,
   TILE_WIDTH
 } from '../../Utils/Constants';
 import {
+  AbstractGameScene,
+  GameSprite,
+  SceneState,
   addControlSpriteKeyboardListeners,
   addControlSpriteWithKeyboard,
+  createBullet,
+  drawTireMark,
+  getScale,
   stopControllingAllSpritesWithKeyboard,
-  updateKeyboardMovement
-} from '../../Utils/ControlSpriteWithKeyboard';
-import { GameSprite } from '../../Utils/GameSprite';
-import { createBullet, updateBullets } from '../../Utils/BulletController';
-import { drawTireMark, updateTireMarks } from '../../Utils/drawTireMarks';
+  updateBullets,
+  updateKeyboardMovement,
+  updateTireMarks
+} from 'midgar-pixi-tech';
 
 /**
  * the type of sprite to create
@@ -91,16 +102,20 @@ export class GameScreen extends AbstractGameScene {
   private tireMarks: Graphics | null = null;
 
   /**
-   * sets up the scene
-   * @param sceneContainer - the Container for the scene
+   * Basic initialization of a scene, passing in the {@link Application} and {@link sceneSwitcher}
+   * @param app - the {@link Application} for the project
+   * @param sceneSwitcher - controls switching between scenes
+   * @param sceneContainer - the {@link Container} the scene uses
    * @returns void
    */
-  setup = (sceneContainer: Container): void => {
-    this.sceneContainer = sceneContainer;
-    this.sceneState = SceneState.LOAD;
+  public override init = (
+    app: Application,
+    sceneSwitcher: (sceneName: string) => void,
+    sceneContainer: Container
+  ): void => {
+    super.init(app, sceneSwitcher, sceneContainer);
 
-    this.sceneContainer.eventMode = 'dynamic';
-    this.sceneContainer.cursor = 'none';
+    this.sceneState = SceneState.LOAD;
 
     this.scale = getScale();
 
@@ -113,6 +128,8 @@ export class GameScreen extends AbstractGameScene {
 
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
+
+    this.createBackButton(PAGE_MAIN_MENU);
   };
 
   /**
@@ -316,6 +333,7 @@ export class GameScreen extends AbstractGameScene {
 
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
+    super.close();
   };
 
   /**

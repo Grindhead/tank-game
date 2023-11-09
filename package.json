@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@pixi/particle-emitter": "^5.0.8",
+    "midgar-pixi-tech": "^2.0.8",
     "pixi.js": "^7.3.2",
     "stats.js": "^0.17.0"
   },

@@ -1,7 +1,13 @@
-import { Container, Point, Sprite, Text, TextStyle } from 'pixi.js';
+import {
+  Application,
+  Container,
+  Point,
+  Sprite,
+  Text,
+  TextStyle
+} from 'pixi.js';
 import * as Constants from '../../Utils/Constants';
-import { getScale } from '../../Utils/getGameScale';
-import { AbstractGameScene, SceneState } from '../Scene';
+import { AbstractGameScene, SceneState, getScale } from 'midgar-pixi-tech';
 
 /**
  * the MainMenu class
@@ -18,13 +24,19 @@ export class MainMenuScreen extends AbstractGameScene {
   private playButton: Sprite | null = null;
 
   /**
-   * sets up the scene
-   * @param sceneContainer - the Container for the scene
+   * Basic initialization of a scene, passing in the {@link Application} and {@link sceneSwitcher}
+   * @param app - the {@link Application} for the project
+   * @param sceneSwitcher - controls switching between scenes
+   * @param sceneContainer - the {@link Container} the scene uses
    * @returns void
    */
-  setup = (sceneContainer: Container): void => {
+  override init = (
+    app: Application,
+    sceneSwitcher: (sceneName: string) => void,
+    sceneContainer: Container
+  ): void => {
+    super.init(app, sceneSwitcher, sceneContainer);
     const center = new Point(window.innerWidth / 2, window.innerHeight / 2);
-    this.sceneContainer = sceneContainer;
     this.sceneState = SceneState.LOAD;
     this.playButton = this.addButton(
       Constants.PAGE_GAME,
@@ -42,7 +54,7 @@ export class MainMenuScreen extends AbstractGameScene {
     this.header = new Text('Welcome\nPlease enjoy your stay.', headerStyle);
     this.header.style.wordWrap = true;
 
-    sceneContainer.addChild(this.header);
+    this.sceneContainer?.addChild(this.header);
     this.header.anchor.set(0.5, 0.5);
     this.updateDisplay();
   };
@@ -73,13 +85,14 @@ export class MainMenuScreen extends AbstractGameScene {
    * updates the scene
    * @returns void
    */
-  sceneUpdate = (): void => {};
+  public override sceneUpdate = (): void => {};
 
   /**
    * closes the scene
    * @returns void
    */
-  close = (): void => {
+  public override close = (): void => {
+    super.close();
     if (this.header) {
       this.header.destroy();
       this.header = null;

@@ -12,6 +12,7 @@ module.exports = {
   rules: {
     'tsdoc/syntax': 'warn',
     'no-multi-spaces': ['error'],
-    'no-multiple-empty-lines': ['error', { max: 2, maxBOF: 1, maxEOF: 0 }]
+    'no-multiple-empty-lines': ['error', { max: 2, maxBOF: 1, maxEOF: 0 }],
+    'no-unexpected-multiline': 2
   }
 };

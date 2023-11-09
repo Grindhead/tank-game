@@ -8,6 +8,9 @@ dependencies:
   '@pixi/particle-emitter':
     specifier: ^5.0.8
     version: 5.0.8(@pixi/constants@7.3.2)(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/math@7.3.2)(@pixi/sprite@7.3.2)(@pixi/ticker@7.3.2)
+  midgar-pixi-tech:
+    specifier: ^2.0.8
+    version: 2.0.8(@pixi/utils@7.3.2)
   pixi.js:
     specifier: ^7.3.2
     version: 7.3.2(@pixi/utils@7.3.2)
@@ -4117,6 +4120,14 @@ packages:
       braces: 3.0.2
       picomatch: 2.3.1
     dev: true
+
+  /midgar-pixi-tech@2.0.8(@pixi/utils@7.3.2):
+    resolution: {integrity: sha512-644wtPHoQtSZ31BbGhgJ+f7H+CjvstHTxKQkx9Ht9O23F9jvQOfssrkRLuMefBSBVI84tF2CQ/oz9sqp4+RnOw==}
+    dependencies:
+      pixi.js: 7.3.2(@pixi/utils@7.3.2)
+    transitivePeerDependencies:
+      - '@pixi/utils'
+    dev: false
 
   /mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
