@@ -311,7 +311,7 @@ export class GameScreen extends AbstractGameScene {
    * closes the scene
    * @returns void
    */
-  close = (): void => {
+  close(): void {
     if (this.sceneContainer) {
       this.sceneContainer.destroy();
       this.sceneContainer = null;
@@ -334,7 +334,7 @@ export class GameScreen extends AbstractGameScene {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
     super.close();
-  };
+  }
 
   /**
    * generates a 50x50 grid of 35x35 tiles of random hay bales and walls

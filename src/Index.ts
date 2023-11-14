@@ -76,6 +76,8 @@ const setup = () => {
   });
 };
 
+// eslint-disable-next-line
+// @ts-ignore
 window.WebFontConfig = {
   google: {
     families: ['Lacquer']
@@ -113,7 +115,7 @@ window.WebFontConfig = {
   wf.type = 'text/javascript';
   wf.async = true;
   const s = document.getElementsByTagName('script')[0];
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // eslint-disable-next-line
   // @ts-ignore
   s.parentNode.insertBefore(wf, s);
 })();

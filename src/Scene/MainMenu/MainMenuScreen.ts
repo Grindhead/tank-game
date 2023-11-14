@@ -91,7 +91,7 @@ export class MainMenuScreen extends AbstractGameScene {
    * closes the scene
    * @returns void
    */
-  public override close = (): void => {
+  public close(): void {
     super.close();
     if (this.header) {
       this.header.destroy();
@@ -103,5 +103,5 @@ export class MainMenuScreen extends AbstractGameScene {
       this.sceneContainer?.destroy();
       this.sceneContainer = null;
     }
-  };
+  }
 }

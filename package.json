@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "pnpm lint && webpack --mode=production --config webpack.config.mjs && pnpm images",
-    "docs": "typedoc --options typedoc.json",
-    "start": "pnpm docs && webpack-dev-server --mode development && pnpm open http://localhost:8080",
+    "docs": "pnpm typedoc --options typedoc.json",
+    "start": "webpack-dev-server --mode development --open --config webpack.config.mjs",
     "lint": "eslint -f unix \"src/**/*.{ts,tsx}\"",
     "compress": "pngquant --quality 60-80 --force dist/atlas.png --output dist/atlas.png",
     "images": "TexturePacker --format pixijs4 --sheet dist/atlas.png --data dist/atlas.json src/Resources/Images && pnpm compress",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@pixi/particle-emitter": "^5.0.8",
-    "midgar-pixi-tech": "^2.0.8",
+    "midgar-pixi-tech": "^2.0.19",
     "pixi.js": "^7.3.2",
     "stats.js": "^0.17.0"
   },
