@@ -1,6 +1,6 @@
 {
   "name": "tank-game",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Tank game using Pixi.js",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@pixi/particle-emitter": "^5.0.8",
-    "midgar-pixi-tech": "^2.0.19",
+    "midgar-pixi-tech": "^2.0.33",
     "pixi.js": "^7.3.2",
     "stats.js": "^0.17.0"
   },

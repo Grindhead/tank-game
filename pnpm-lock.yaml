@@ -9,8 +9,8 @@ dependencies:
     specifier: ^5.0.8
     version: 5.0.8(@pixi/constants@7.3.2)(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/math@7.3.2)(@pixi/sprite@7.3.2)(@pixi/ticker@7.3.2)
   midgar-pixi-tech:
-    specifier: ^2.0.19
-    version: 2.0.19(pixi.js@7.3.2)
+    specifier: ^2.0.33
+    version: 2.0.33(pixi.js@7.3.2)
   pixi.js:
     specifier: ^7.3.2
     version: 7.3.2(@pixi/utils@7.3.2)
@@ -4121,8 +4121,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /midgar-pixi-tech@2.0.19(pixi.js@7.3.2):
-    resolution: {integrity: sha512-Wmd0nCIPjqHznWhCx7Kgjl/+yzR9HXRStg01ZP35D5I3+Rihy8Cv121yRSdaK3Xep5k6Oh6my2QadF49Co6N8A==}
+  /midgar-pixi-tech@2.0.33(pixi.js@7.3.2):
+    resolution: {integrity: sha512-IPeScCXnwbzhGQgb6ZcINVdEKHP15PzhEyi31Zb9BIuTWAAOU77atygKtx51S7RVqixVb5RC+K3VqyxxhDzdmA==}
     peerDependencies:
       pixi.js: ^7.3.2
     dependencies:

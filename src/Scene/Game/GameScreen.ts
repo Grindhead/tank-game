@@ -20,14 +20,37 @@ import {
   SceneState,
   addControlSpriteKeyboardListeners,
   addControlSpriteWithKeyboard,
+  bulletList,
   createBullet,
   drawTireMark,
+  drawTrail,
   getScale,
   stopControllingAllSpritesWithKeyboard,
   updateBullets,
   updateKeyboardMovement,
-  updateTireMarks
+  updateTireFade,
+  updateTrailFade
 } from 'midgar-pixi-tech';
+
+/**
+ * The initial alpha of the tank wheel trail mark FX
+ */
+const TIRE_MARK_INITIAL_ALPHA: number = 0.8;
+
+/**
+ * the color of the trail marks
+ */
+const TIRE_MARK_COLOR: number = 0x473131;
+
+/**
+ * initial alpha of the bullet trail mark FX
+ */
+const BULLET_TRAIL_INITIAL_ALPHA: number = 0.6;
+
+/**
+ * the color of the bullet trails
+ */
+const BULLET_TRAIL_COLOR: number = 0xfff;
 
 /**
  * the type of sprite to create
@@ -99,7 +122,7 @@ export class GameScreen extends AbstractGameScene {
   /**
    * the {@link Graphics} object to draw tire marks too
    */
-  private tireMarks: Graphics | null = null;
+  private fx: Graphics | null = null;
 
   /**
    * Basic initialization of a scene, passing in the {@link Application} and {@link sceneSwitcher}
@@ -121,7 +144,7 @@ export class GameScreen extends AbstractGameScene {
 
     this.spawnPoint = new Point();
     this.createGrid();
-    this.createTireMarks();
+    this.createFx();
     this.createPlayer();
     this.updateDisplay();
     addControlSpriteKeyboardListeners();
@@ -133,11 +156,12 @@ export class GameScreen extends AbstractGameScene {
   };
 
   /**
-   * create the {@link Graphics} used to draw the tire marks and add to the display list
+   * create the {@link Graphics} used to draw the FX and add to the display list
    */
-  createTireMarks = (): void => {
-    this.tireMarks = new Graphics();
-    this.sceneContainer!.addChild(this.tireMarks);
+  createFx = (): void => {
+    this.fx = new Graphics();
+    this.fx.lineStyle(0);
+    this.sceneContainer!.addChild(this.fx);
   };
 
   /**
@@ -290,6 +314,8 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   sceneUpdate = (delta: number): void => {
+    this.fx?.clear();
+
     updateKeyboardMovement(
       delta,
       this.collisionTargetList!,
@@ -303,8 +329,40 @@ export class GameScreen extends AbstractGameScene {
       TILE_WIDTH * GRID_X_COUNT,
       TILE_HEIGHT * GRID_Y_COUNT
     );
-    drawTireMark(this.tireMarks!, this.player!);
-    updateTireMarks(this.tireMarks!, 0.01, delta);
+    drawTireMark(
+      this.fx!,
+      this.player!,
+      TIRE_MARK_INITIAL_ALPHA,
+      TIRE_MARK_COLOR,
+      this.player!.width * 0.2,
+      this.player!.width * 0.2
+    );
+    let width: number = 0;
+    let offset: number = 0;
+    bulletList.forEach((bullet) => {
+      offset = 0;
+      width = bullet.width * 0.25;
+
+      drawTrail(
+        this.fx!,
+        bullet,
+        BULLET_TRAIL_INITIAL_ALPHA,
+        BULLET_TRAIL_COLOR,
+        width,
+        offset
+      );
+    });
+
+    updateTireFade(
+      this.fx!,
+      0.01,
+      delta,
+      TIRE_MARK_COLOR,
+      this.player!.width * 0.1,
+      this.player!.width * 0.2
+    );
+
+    updateTrailFade(this.fx!, 0.02, delta, BULLET_TRAIL_COLOR, width, offset);
   };
 
   /**
