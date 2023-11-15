@@ -50,7 +50,7 @@ export default {
         loader: 'webpack-glsl-loader'
       },
       {
-        test: /\.html$/, // Add a rule for HTML files
+        test: /\.html$/,
         use: 'html-loader'
       }
     ]
@@ -82,7 +82,7 @@ export default {
       patterns: [
         {
           from: './src/Resources/Favicon',
-          to: './dist'
+          to: './'
         }
       ]
     })
