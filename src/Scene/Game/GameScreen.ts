@@ -138,6 +138,7 @@ export class GameScreen extends AbstractGameScene {
   ): void => {
     super.init(app, sceneSwitcher, sceneContainer);
 
+    this.isSpaceDown = false;
     this.sceneState = SceneState.LOAD;
 
     this.scale = getScale();
@@ -151,6 +152,8 @@ export class GameScreen extends AbstractGameScene {
 
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
+    window.addEventListener('blur', this.resetFire);
+    document.addEventListener('visibilitychange', this.resetFire);
 
     this.createBackButton(PAGE_MAIN_MENU);
   };
@@ -169,6 +172,8 @@ export class GameScreen extends AbstractGameScene {
    * @param e - the {@link KeyboardEvent}
    * @returns void
    */
+  private resetFire = (): void => { this.isSpaceDown = false; };
+
   handleKeyDown = (e: KeyboardEvent): void => {
     if (e.key === ' ') {
       this.isSpaceDown = true;
@@ -288,7 +293,7 @@ export class GameScreen extends AbstractGameScene {
     this.player = new GameSprite(Texture.from('tank.png'));
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
-    this.player.scale.set(this.scale * 4);
+    this.player.scale.set(4);
     this.player.anchor.set(0.5);
     this.sceneContainer!.addChild(this.player);
     this.player.tint = 0xff0000;
@@ -300,12 +305,12 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   updateDisplay = (): void => {
+    this.scale = getScale();
     const gridWidth = GRID_X_COUNT * TILE_WIDTH * this.scale;
     const xPadding = (window.innerWidth - gridWidth) / 2;
     this.sceneContainer?.scale.set(this.scale);
     if (this.sceneContainer) this.sceneContainer.x = xPadding;
-    this.spawnPoint.x *= this.scale;
-    this.spawnPoint.y *= this.scale;
+
   };
 
   /**
@@ -370,6 +375,9 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   close(): void {
+    this.isSpaceDown = false;
+    window.removeEventListener('blur', this.resetFire);
+    document.removeEventListener('visibilitychange', this.resetFire);
     if (this.sceneContainer) {
       this.sceneContainer.destroy();
       this.sceneContainer = null;
