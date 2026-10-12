@@ -6,11 +6,13 @@
   "scripts": {
     "build": "pnpm lint && webpack --mode=production --config webpack.config.mjs && pnpm images",
     "docs": "pnpm typedoc --options typedoc.json",
-    "start": "webpack-dev-server --mode development --open --config webpack.config.mjs",
+    "start": "pnpm atlas && webpack-dev-server --mode development --open --config webpack.config.mjs",
     "lint": "eslint -f unix \"src/**/*.{ts,tsx}\"",
     "compress": "pngquant --quality 60-80 --force dist/atlas.png --output dist/atlas.png",
-    "images": "TexturePacker --format pixijs4 --sheet dist/atlas.png --data dist/atlas.json src/Resources/Images && pnpm compress",
-    "create-level": "node ./src/Resources/create-level.cjs"
+    "atlas": "TexturePacker --format pixijs4 --sheet dist/atlas.png --data dist/atlas.json src/Resources/Images",
+    "images": "pnpm atlas && pnpm compress",
+    "create-level": "node ./src/Resources/create-level.cjs",
+    "test": "node --test test/*.test.*"
   },
   "dependencies": {
     "@pixi/particle-emitter": "^5.0.8",

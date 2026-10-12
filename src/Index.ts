@@ -1,7 +1,8 @@
-import './resources/css/styles.css';
+import './Resources/CSS/styles.css';
 import { Application, Assets, Text } from 'pixi.js';
 import Stats from 'stats.js';
 import * as Constants from './Utils/Constants';
+import { loadWithRetry, once, waitForFont } from './Utils/Startup';
 import { MainMenuScreen } from './Scene/MainMenu/MainMenuScreen';
 import { GameScreen } from './Scene/Game/GameScreen';
 import {
@@ -44,9 +45,20 @@ const app = new Application({
 document.body.appendChild(app.view as unknown as Node);
 
 /**
- * setup the application
+ * how long to wait for the web font before starting with a fallback font
  */
-const setup = () => {
+const FONT_TIMEOUT_MS: number = 3000;
+
+/**
+ * the font stack used for loading text, with a fallback if Lacquer is blocked
+ */
+const LOADING_FONT: string = 'Lacquer, sans-serif';
+
+/**
+ * setup the application. Guarded so only one {@link Engine} and one ticker
+ * listener are ever created, even if loading is retried.
+ */
+const setup = once(() => {
   const engine: Engine = new Engine(
     app,
     [
@@ -74,48 +86,128 @@ const setup = () => {
     engine.update(delta);
     stats.end();
   });
+});
+
+/**
+ * the DOM element used to report a load failure; plain HTML so it works even
+ * when the font or atlas could not be loaded
+ */
+let errorPanel: HTMLDivElement | null = null;
+
+/**
+ * show or update the load failure panel with a retry button
+ * @param retry - retries the load
+ * @returns void
+ */
+const showLoadError = (retry: () => void): void => {
+  if (!errorPanel) {
+    errorPanel = document.createElement('div');
+    errorPanel.id = 'load-error';
+    errorPanel.setAttribute('role', 'alert');
+    document.body.appendChild(errorPanel);
+  }
+  errorPanel.textContent = '';
+
+  const message = document.createElement('p');
+  message.textContent =
+    'The game assets (atlas.json / atlas.png) could not be loaded. ' +
+    'Check your connection and try again.';
+  errorPanel.appendChild(message);
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = 'Retry';
+  button.addEventListener('click', () => {
+    button.disabled = true;
+    button.textContent = 'Retrying...';
+    retry();
+  });
+  errorPanel.appendChild(button);
 };
 
-// eslint-disable-next-line
-// @ts-ignore
-window.WebFontConfig = {
-  google: {
-    families: ['Lacquer']
-  },
-  active() {
-    loadingText = new Text('Loading...', {
-      fontFamily: 'Lacquer',
-      fontSize: 50 * getScale() + 'px',
-      align: 'center'
-    });
-    app.stage.addChild(loadingText);
-    loadingText.x = window.innerWidth / 2 - loadingText.width / 2;
-    loadingText.y = window.innerHeight / 2 - loadingText.height / 2;
+/**
+ * remove the load failure panel if it is showing
+ * @returns void
+ */
+const hideLoadError = (): void => {
+  errorPanel?.remove();
+  errorPanel = null;
+};
 
-    Assets.load(['atlas.json']).then(() => {
+/**
+ * show the loading text, load the atlas and start the game
+ * @returns void
+ */
+const start = (): void => {
+  loadingText = new Text('Loading...', {
+    fontFamily: LOADING_FONT,
+    fontSize: 50 * getScale() + 'px',
+    align: 'center'
+  });
+  app.stage.addChild(loadingText);
+  loadingText.x = window.innerWidth / 2 - loadingText.width / 2;
+  loadingText.y = window.innerHeight / 2 - loadingText.height / 2;
+
+  loadWithRetry({
+    // Assets caches a failed promise per url, so retries use a fresh url
+    load: (attempt) =>
+      Assets.load(attempt === 0 ? 'atlas.json' : `atlas.json?retry=${attempt}`),
+    onLoaded: () => {
+      hideLoadError();
       if (loadingText) {
         app.stage.removeChild(loadingText);
       }
       loadingText?.destroy();
       loadingText = null;
       setup();
-    });
-  }
+    },
+    onError: (error, retry) => {
+      console.error('Failed to load the texture atlas', error);
+      if (loadingText) {
+        loadingText.text = 'Loading failed';
+        loadingText.x = window.innerWidth / 2 - loadingText.width / 2;
+      }
+      showLoadError(() => {
+        if (loadingText) {
+          loadingText.text = 'Loading...';
+          loadingText.x = window.innerWidth / 2 - loadingText.width / 2;
+        }
+        retry();
+      });
+    }
+  });
 };
 
 /**
- * load the webfont from google
- * ignore the typescript errors
+ * load the webfont from google, then start. If the font loader is blocked,
+ * errors, or takes too long, the game starts anyway with a fallback font.
  */
-(function () {
-  const wf = document.createElement('script');
-  wf.src = `${
-    document.location.protocol === 'https:' ? 'https' : 'http'
-  }://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js`;
-  wf.type = 'text/javascript';
-  wf.async = true;
-  const s = document.getElementsByTagName('script')[0];
-  // eslint-disable-next-line
-  // @ts-ignore
-  s.parentNode.insertBefore(wf, s);
-})();
+waitForFont(
+  (done) => {
+    // eslint-disable-next-line
+    // @ts-ignore
+    window.WebFontConfig = {
+      google: {
+        families: ['Lacquer']
+      },
+      active: done,
+      inactive: done
+    };
+
+    const wf = document.createElement('script');
+    wf.src = `${
+      document.location.protocol === 'https:' ? 'https' : 'http'
+    }://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js`;
+    wf.type = 'text/javascript';
+    wf.async = true;
+    wf.onerror = done;
+    const s = document.getElementsByTagName('script')[0];
+    if (s?.parentNode) {
+      s.parentNode.insertBefore(wf, s);
+    } else {
+      document.head.appendChild(wf);
+    }
+  },
+  start,
+  FONT_TIMEOUT_MS
+);

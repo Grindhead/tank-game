@@ -8,9 +8,9 @@
 
 4. **install dependancies:** run `pnpm install`
 
-5. **run game:** run `pnpm start`
+5. **run game:** run `pnpm start` (this first generates `dist/atlas.json` and `dist/atlas.png` with TexturePackerCLI, so step 2 is required)
 
-# pnpm start - runs the app in dev mode and also runs `yarn docs`
+# pnpm start - generates the texture atlas (`pnpm atlas`) and runs the app in dev mode
 
 # pnpm build - generates a production build to the dist directory
 
@@ -18,8 +18,10 @@
 
 # pnpm docs - generates documentation at localhost:8080/docs
 
+# pnpm atlas - generates the texture atlas into dist without compressing it
+
 # pnpm images - generates texture atlases and compresses them using TexturePackerCLI
 
 # pnpm changeset - creates a .md file to document semver changes
 
-# pnpm create-level - create a new level
+# pnpm create-level - create a new level (tile values: 0 = empty, 1 = indestructible wall, 2 = destructible hay; see `src/Resources/JSON/tileTypes.json`)
