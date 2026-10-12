@@ -23,7 +23,7 @@ const createLevel = () => {
       y = Math.floor(Math.random() * gridSize);
     } while (grid[y][x] !== 0);
 
-    grid[y][x] = 2;
+    grid[y][x] = 1;
   }
 
   // Create destructible tiles
@@ -34,7 +34,7 @@ const createLevel = () => {
       y = Math.floor(Math.random() * gridSize);
     } while (grid[y][x] !== 0);
 
-    grid[y][x] = 1;
+    grid[y][x] = 2;
   }
   const levelData = { data: grid };
   // Convert the grid to a JSON string

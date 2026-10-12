@@ -3,6 +3,8 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import webpack from 'webpack';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -56,6 +58,7 @@ export default {
     ]
   },
   resolve: {
+    alias: { 'pixi.js$': require.resolve('pixi.js') },
     extensions: ['.ts', '.js']
   },
   output: {
@@ -80,6 +83,7 @@ export default {
     new webpack.optimize.ModuleConcatenationPlugin(),
     new CopyWebpackPlugin({
       patterns: [
+        {from: './generated-assets/atlas.*', to: '[name][ext]'},
         {
           from: './src/Resources/Favicon',
           to: './'

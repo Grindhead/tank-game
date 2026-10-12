@@ -23,3 +23,12 @@
 # pnpm changeset - creates a .md file to document semver changes
 
 # pnpm create-level - create a new level
+
+
+## Dashboard task verification
+
+The dev path lacked an atlas, resource imports had wrong case, generated tile values disagreed with rendering, and fire/scale state survived lifecycle changes. Builds generate the atlas, tile values align, focus/exit clear fire, and scaling applies at the root.
+
+Production build, three regressions for controls/resize/tile generation, and Chromium/Firefox font-outage plus asset-failure/retry checks passed.
+
+Webpack now shares one Pixi entry point across the CommonJS app and ESM toolkit, removing a real renderer class mismatch. The toolkit published2.0.38 API is retained.

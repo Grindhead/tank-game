@@ -1,5 +1,6 @@
-import './resources/css/styles.css';
-import { Application, Assets, Text } from 'pixi.js';
+import { startWithAssetRecovery } from './Utils/startup';
+import './Resources/CSS/styles.css';
+import { Application, Assets } from 'pixi.js';
 import Stats from 'stats.js';
 import * as Constants from './Utils/Constants';
 import { MainMenuScreen } from './Scene/MainMenu/MainMenuScreen';
@@ -7,14 +8,13 @@ import { GameScreen } from './Scene/Game/GameScreen';
 import {
   Engine,
   SimpleFadeTransition,
-  getScale,
   setScale
 } from 'midgar-pixi-tech';
 
 /**
  * text to display while loading is in progress
  */
-let loadingText: Text | null;
+
 
 /**
  * Mr D00b stats for performance testing
@@ -43,9 +43,6 @@ const app = new Application({
 
 document.body.appendChild(app.view as unknown as Node);
 
-/**
- * setup the application
- */
 const setup = () => {
   const engine: Engine = new Engine(
     app,
@@ -76,46 +73,5 @@ const setup = () => {
   });
 };
 
-// eslint-disable-next-line
-// @ts-ignore
-window.WebFontConfig = {
-  google: {
-    families: ['Lacquer']
-  },
-  active() {
-    loadingText = new Text('Loading...', {
-      fontFamily: 'Lacquer',
-      fontSize: 50 * getScale() + 'px',
-      align: 'center'
-    });
-    app.stage.addChild(loadingText);
-    loadingText.x = window.innerWidth / 2 - loadingText.width / 2;
-    loadingText.y = window.innerHeight / 2 - loadingText.height / 2;
 
-    Assets.load(['atlas.json']).then(() => {
-      if (loadingText) {
-        app.stage.removeChild(loadingText);
-      }
-      loadingText?.destroy();
-      loadingText = null;
-      setup();
-    });
-  }
-};
-
-/**
- * load the webfont from google
- * ignore the typescript errors
- */
-(function () {
-  const wf = document.createElement('script');
-  wf.src = `${
-    document.location.protocol === 'https:' ? 'https' : 'http'
-  }://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js`;
-  wf.type = 'text/javascript';
-  wf.async = true;
-  const s = document.getElementsByTagName('script')[0];
-  // eslint-disable-next-line
-  // @ts-ignore
-  s.parentNode.insertBefore(wf, s);
-})();
+startWithAssetRecovery({load: () => Assets.load(['atlas.json']), ready: setup, fontFamily: 'Lacquer'});

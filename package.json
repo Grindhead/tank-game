@@ -4,13 +4,14 @@
   "description": "Tank game using Pixi.js",
   "type": "module",
   "scripts": {
-    "build": "pnpm lint && webpack --mode=production --config webpack.config.mjs && pnpm images",
+    "build": "pnpm images && webpack --mode production --config webpack.config.mjs",
     "docs": "pnpm typedoc --options typedoc.json",
-    "start": "webpack-dev-server --mode development --open --config webpack.config.mjs",
+    "start": "pnpm images && webpack serve --mode development --config webpack.config.mjs",
     "lint": "eslint -f unix \"src/**/*.{ts,tsx}\"",
     "compress": "pngquant --quality 60-80 --force dist/atlas.png --output dist/atlas.png",
-    "images": "TexturePacker --format pixijs4 --sheet dist/atlas.png --data dist/atlas.json src/Resources/Images && pnpm compress",
-    "create-level": "node ./src/Resources/create-level.cjs"
+    "images": "node scripts/build-atlas.mjs",
+    "create-level": "node ./src/Resources/create-level.cjs",
+    "test": "node --test tests/game.test.mjs"
   },
   "dependencies": {
     "@pixi/particle-emitter": "^5.0.8",
@@ -45,6 +46,7 @@
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
-    "webpack-glsl-loader": "1.0.1"
+    "webpack-glsl-loader": "1.0.1",
+    "sharp": "0.34.5"
   }
 }
