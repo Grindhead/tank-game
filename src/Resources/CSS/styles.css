@@ -16,3 +16,23 @@ canvas {
   right: 0px;
   left: auto !important;
 }
+
+#load-error {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90vw;
+  padding: 16px 24px;
+  background: #222;
+  color: #fff;
+  font-family: sans-serif;
+  text-align: center;
+  border-radius: 8px;
+}
+
+#load-error button {
+  font-size: 16px;
+  padding: 8px 16px;
+  cursor: pointer;
+}

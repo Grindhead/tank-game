@@ -48,7 +48,7 @@ export class MainMenuScreen extends AbstractGameScene {
       align: 'center',
       dropShadow: true,
       fill: '0xff0000',
-      fontFamily: 'Lacquer'
+      fontFamily: 'Lacquer, sans-serif'
     });
 
     this.header = new Text('Welcome\nPlease enjoy your stay.', headerStyle);

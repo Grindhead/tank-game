@@ -7,6 +7,8 @@ import {
   Texture
 } from 'pixi.js';
 import levelData from '../../Resources/JSON/staticMaze.json';
+import TILE_TYPES from '../../Resources/JSON/tileTypes.json';
+import { FireLatch } from '../../Utils/FireLatch';
 import {
   GRID_X_COUNT,
   GRID_Y_COUNT,
@@ -53,12 +55,19 @@ const BULLET_TRAIL_INITIAL_ALPHA: number = 0.6;
 const BULLET_TRAIL_COLOR: number = 0xfff;
 
 /**
- * the type of sprite to create
+ * the type of sprite to create. Values come from the shared mapping in
+ * Resources/JSON/tileTypes.json, which create-level.cjs also uses:
  * 0 = empty
- * 1 = wall
- * 2 = hay
+ * 1 = wall (indestructible rocks)
+ * 2 = hay (destructible)
  */
 type GridSpriteType = 0 | 1 | 2;
+
+/**
+ * the player tank scale in logical game coordinates. The viewport scale is
+ * applied once, to the scene container, so it must not be applied here too.
+ */
+const PLAYER_SCALE: number = 2;
 
 /**
  * the type of tank
@@ -110,9 +119,9 @@ export class GameScreen extends AbstractGameScene {
   private scale: number = 0;
 
   /**
-   * is the space button down
+   * tracks whether the space button is held
    */
-  private isSpaceDown: boolean = false;
+  private fireLatch: FireLatch = new FireLatch();
 
   /**
    * the current tank the player is using
@@ -141,6 +150,7 @@ export class GameScreen extends AbstractGameScene {
     this.sceneState = SceneState.LOAD;
 
     this.scale = getScale();
+    this.fireLatch.reset();
 
     this.spawnPoint = new Point();
     this.createGrid();
@@ -151,6 +161,8 @@ export class GameScreen extends AbstractGameScene {
 
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
+    window.addEventListener('blur', this.handleFocusLoss);
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
 
     this.createBackButton(PAGE_MAIN_MENU);
   };
@@ -171,7 +183,7 @@ export class GameScreen extends AbstractGameScene {
    */
   handleKeyDown = (e: KeyboardEvent): void => {
     if (e.key === ' ') {
-      this.isSpaceDown = true;
+      this.fireLatch.press(e.repeat);
     } else if (e.key === 't') {
       this.changeTank();
     }
@@ -184,7 +196,25 @@ export class GameScreen extends AbstractGameScene {
    */
   handleKeyUp = (e: KeyboardEvent): void => {
     if (e.key === ' ') {
-      this.isSpaceDown = false;
+      this.fireLatch.release();
+    }
+  };
+
+  /**
+   * stop firing when the window loses focus, as the keyup may never arrive
+   * @returns void
+   */
+  handleFocusLoss = (): void => {
+    this.fireLatch.reset();
+  };
+
+  /**
+   * stop firing when the tab is hidden
+   * @returns void
+   */
+  handleVisibilityChange = (): void => {
+    if (document.visibilityState === 'hidden') {
+      this.fireLatch.reset();
     }
   };
 
@@ -221,7 +251,7 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   handleFire = (): void => {
-    if (this.isSpaceDown) {
+    if (this.fireLatch.isHeld()) {
       if (this.currentTankType === 0) {
         createBullet(
           this.player!.x,
@@ -288,7 +318,7 @@ export class GameScreen extends AbstractGameScene {
     this.player = new GameSprite(Texture.from('tank.png'));
     this.player.x = this.spawnPoint.x;
     this.player.y = this.spawnPoint.y;
-    this.player.scale.set(this.scale * 4);
+    this.player.scale.set(PLAYER_SCALE);
     this.player.anchor.set(0.5);
     this.sceneContainer!.addChild(this.player);
     this.player.tint = 0xff0000;
@@ -300,12 +330,13 @@ export class GameScreen extends AbstractGameScene {
    * @returns void
    */
   updateDisplay = (): void => {
+    // the viewport scale is applied once, here, to the whole scene; the
+    // tank, tiles, spawn point and collisions all stay in logical coordinates
+    this.scale = getScale();
     const gridWidth = GRID_X_COUNT * TILE_WIDTH * this.scale;
     const xPadding = (window.innerWidth - gridWidth) / 2;
     this.sceneContainer?.scale.set(this.scale);
     if (this.sceneContainer) this.sceneContainer.x = xPadding;
-    this.spawnPoint.x *= this.scale;
-    this.spawnPoint.y *= this.scale;
   };
 
   /**
@@ -391,6 +422,12 @@ export class GameScreen extends AbstractGameScene {
 
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
+    window.removeEventListener('blur', this.handleFocusLoss);
+    document.removeEventListener(
+      'visibilitychange',
+      this.handleVisibilityChange
+    );
+    this.fireLatch.reset();
     super.close();
   }
 
@@ -426,12 +463,12 @@ export class GameScreen extends AbstractGameScene {
    */
   createSprite = (spriteType: GridSpriteType): Sprite => {
     let sprite: GameSprite;
-    if (spriteType === 1) {
+    if (spriteType === TILE_TYPES.WALL) {
       sprite = new GameSprite(Texture.from('rocks.png'));
       this.rocksList!.push(sprite);
       sprite.life = Infinity;
       this.collisionTargetList!.push(sprite);
-    } else if (spriteType === 2) {
+    } else if (spriteType === TILE_TYPES.HAY) {
       sprite = new GameSprite(Texture.from('hay.png'));
       sprite.life = 100;
       this.hayList!.push(sprite);
